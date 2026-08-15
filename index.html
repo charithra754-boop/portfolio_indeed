@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charithra G — AI/ML Engineer &amp; Multi-Agent Systems Architect</title>
+<meta name="description" content="AI Engineer specializing in neuromorphic computing, multi-agent systems, and production ML. 96% threat detection accuracy, 500k events/sec, $2.3M losses prevented.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  /* ---- Espresso base: near-black with a warm roast undertone ---- */
+  --bg:            #0F0E13;   /* deep espresso */
+  --bg-elev:       #171419;   /* raised surface  */
+  --bg-elev-2:     #1F1A20;   /* highest surface */
+  --line:          #2C2529;
+  --line-hi:       #453A38;
+  --text:          #F2EBE3;   /* warm bone white */
+  --text-dim:      #B3A69B;   /* latte           */
+  --text-mute:     #7E7169;   /* muted mocha     */
+
+  /* ---- Metallic accent family (replaces the neon set) ---- */
+  --copper:        #E5A967;   /* primary  */
+  --gold:          #D4AF37;   /* secondary */
+  --bronze:        #B87333;   /* tertiary  */
+  --brass:         #C9A227;   /* highlight */
+  --clay:          #C97B5A;   /* terracotta */
+
+  /* RGB channels for rgba() composition without color-mix */
+  --copper-rgb:    229,169,103;
+  --gold-rgb:      212,175,55;
+  --bronze-rgb:    184,115,51;
+  --clay-rgb:      201,123,90;
+
+  --ink:           #14100C;   /* text on metallic fills */
+
+  --font-sans:     'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif:    'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-mono:     'Fira Code', ui-monospace, monospace;
+  --r-sm: 8px; --r-md: 14px; --r-lg: 22px;
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+  --nav-h: 66px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; scroll-padding-top:var(--nav-h); }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-sans);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{ line-height:1.15; letter-spacing:-.025em; margin:0; font-weight:800; }
+
+/* ---- Editorial serif italic: the "classy" counterpoint to the sans ----
+   Used for emphasised fragments inside headings and for quiet meta lines.
+   Serif italic sits optically smaller than the sans, so it is bumped up. */
+.it{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-weight:400;
+  letter-spacing:.005em;
+  font-size:1.14em;
+  line-height:.95;
+}
+.it-thin{ font-weight:300; }
+p{ margin:0; }
+a{ color:inherit; text-decoration:none; }
+ul{ margin:0; padding:0; list-style:none; }
+img,svg{ display:block; max-width:100%; }
+code,.mono{ font-family:var(--font-mono); }
+
+:focus-visible{ outline:2px solid var(--copper); outline-offset:3px; border-radius:4px; }
+
+.skip-link{
+  position:absolute; top:-100px; left:12px; z-index:999;
+  background:var(--copper); color:var(--ink); padding:10px 18px;
+  border-radius:0 0 var(--r-sm) var(--r-sm); font-weight:800;
+}
+.skip-link:focus{ top:0; }
+
+/* visually hidden but exposed to assistive tech */
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap{ width:100%; max-width:1220px; margin-inline:auto; padding-inline:clamp(18px,4vw,40px); }
+section{ position:relative; padding-block:clamp(70px,10vw,130px); }
+.eyebrow{
+  font-family:var(--font-mono); font-size:.74rem; letter-spacing:.26em;
+  text-transform:uppercase; color:var(--copper); margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{
+  content:''; width:26px; height:1px; background:var(--copper);
+  box-shadow:0 0 8px var(--copper);
+}
+.section-title{ font-size:clamp(1.9rem,4.4vw,3rem); margin-bottom:14px; }
+.section-sub{
+  color:var(--text-dim); max-width:60ch;
+  font-family:var(--font-serif); font-style:italic; font-weight:300;
+  font-size:1.28rem; line-height:1.5; letter-spacing:.005em;
+}
+
+/* ============================================================
+   3D BACKGROUND CANVAS
+   ============================================================ */
+#bg-canvas{
+  position:fixed; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+  opacity:0; transition:opacity 1.4s ease;
+}
+#bg-canvas.ready{ opacity:1; }
+.page{ position:relative; z-index:1; }
+
+/* grain + vignette overlay */
+.atmos{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(var(--copper-rgb),.10), transparent 60%),
+    radial-gradient(90% 70% at 88% 12%, rgba(var(--gold-rgb),.10), transparent 62%),
+    radial-gradient(100% 100% at 50% 100%, rgba(15,14,19,.88), transparent 55%);
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:sticky; top:0; z-index:100; height:var(--nav-h);
+  display:flex; align-items:center;
+  background:rgba(15,14,19,.68);
+  backdrop-filter:blur(16px) saturate(150%);
+  border-bottom:1px solid transparent;
+  transition:border-color .35s ease, background .35s ease;
+}
+.nav.scrolled{ border-bottom-color:var(--line); background:rgba(15,14,19,.9); }
+.nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:20px; width:100%; }
+.brand{ display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:-.02em; }
+/* ---- Chibi brand avatar ---- */
+/* viewBox is cropped to the head+shoulders so the face reads at nav size;
+   the full body still exists in the SVG for larger renderings. */
+.chibi{
+  width:46px; height:46px; flex:0 0 auto; overflow:visible;
+  margin:-3px 1px -3px -3px;
+}
+.chibi .c-body{
+  transform-box:fill-box; transform-origin:50% 92%;
+  animation:chibiBob 4.2s ease-in-out infinite;
+}
+@keyframes chibiBob{
+  0%,100%{ transform:translateY(0) rotate(-1.6deg); }
+  50%    { transform:translateY(-2px) rotate(1.6deg); }
+}
+.chibi .c-bun{
+  transform-box:fill-box; transform-origin:50% 100%;
+  animation:bunSway 3.1s ease-in-out infinite;
+}
+@keyframes bunSway{ 0%,100%{ transform:rotate(-4deg); } 50%{ transform:rotate(4deg); } }
+.chibi .c-eye{
+  transform-box:fill-box; transform-origin:center;
+  animation:chibiBlink 5.4s infinite;
+}
+@keyframes chibiBlink{ 0%,93%,100%{ transform:scaleY(1); } 96%{ transform:scaleY(.1); } }
+.chibi .c-glow{ opacity:.5; transition:opacity .45s ease; }
+.chibi .c-hand{
+  transform-box:fill-box; transform-origin:80% 100%;
+  transition:transform .45s var(--ease-spring);
+}
+/* on hover she perks up: brighter glow, quicker bob, small wave */
+.brand:hover .chibi .c-glow{ opacity:1; }
+.brand:hover .chibi .c-body{ animation-duration:1.1s; }
+.brand:hover .chibi .c-hand{ transform:rotate(-16deg) translateY(-1px); }
+.brand:hover .chibi .c-blush{ opacity:.85; }
+.chibi .c-blush{ transition:opacity .35s ease; }
+
+.nav-links{ display:flex; align-items:center; gap:4px; }
+.nav-links a{
+  position:relative; padding:8px 14px; border-radius:99px;
+  font-size:.9rem; font-weight:600; color:var(--text-dim);
+  transition:color .25s ease, background .25s ease;
+}
+.nav-links a:hover{ color:var(--text); background:rgba(255,255,255,.05); }
+.nav-links a.active{ color:var(--copper); background:rgba(var(--copper-rgb),.1); }
+.nav-cta{
+  padding:9px 18px !important; border-radius:99px;
+  background:var(--copper) !important; color:var(--ink) !important;
+  font-weight:800 !important; box-shadow:0 0 0 0 rgba(var(--copper-rgb),.5);
+  transition:box-shadow .3s ease, transform .3s var(--ease-spring) !important;
+}
+.nav-cta:hover{ transform:translateY(-2px); box-shadow:0 8px 26px -6px rgba(var(--copper-rgb),.7); }
+
+.nav-toggle{
+  display:none; background:none; border:1px solid var(--line);
+  color:var(--text); width:42px; height:38px; border-radius:10px;
+  cursor:pointer; align-items:center; justify-content:center;
+}
+@media (max-width:860px){
+  .nav-toggle{ display:flex; }
+  .nav-links{
+    position:absolute; top:var(--nav-h); left:0; right:0;
+    flex-direction:column; align-items:stretch; gap:2px;
+    background:rgba(18,15,20,.98); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--line); padding:14px;
+    transform:translateY(-8px); opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .nav-links.open{ opacity:1; transform:none; pointer-events:auto; }
+  .nav-links a{ padding:13px 16px; }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height:calc(100svh - var(--nav-h));
+  display:grid; align-items:center;
+  padding-block:clamp(28px,5vh,64px);
+}
+.hero-grid{ display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(30px,5vw,60px); align-items:center; }
+@media (max-width:960px){ .hero-grid{ grid-template-columns:1fr; } }
+
+.status-pill{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:7px 15px 7px 11px; border-radius:99px;
+  background:rgba(var(--gold-rgb),.09); border:1px solid rgba(var(--gold-rgb),.28);
+  font-family:var(--font-mono); font-size:.76rem; color:var(--brass);
+  margin-bottom:clamp(14px,2.2vh,22px);
+}
+.dot-live{
+  width:7px; height:7px; border-radius:50%; background:var(--brass);
+  box-shadow:0 0 0 0 rgba(var(--gold-rgb),.7); animation:pulseDot 2.2s infinite;
+}
+@keyframes pulseDot{
+  0%{ box-shadow:0 0 0 0 rgba(var(--gold-rgb),.6); }
+  70%{ box-shadow:0 0 0 9px rgba(var(--gold-rgb),0); }
+  100%{ box-shadow:0 0 0 0 rgba(var(--gold-rgb),0); }
+}
+
+.hero h1{
+  font-size:clamp(2.4rem,5.4vw,4rem);
+  margin-bottom:16px;
+}
+.grad-text{
+  /* polished-metal sweep: bronze → copper → pale gold highlight → gold */
+  background:linear-gradient(105deg,var(--bronze) 0%,var(--copper) 32%,#F6DCA8 58%,var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  background-size:220% 100%; animation:gradShift 9s ease-in-out infinite;
+}
+@keyframes gradShift{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+
+.hero-role{
+  font-family:var(--font-mono); font-size:clamp(.92rem,2.1vw,1.14rem);
+  color:var(--text-dim); margin-bottom:clamp(14px,2.2vh,20px); min-height:1.7em;
+}
+.hero-role .typed{ color:var(--gold); font-weight:500; }
+.hero-role{ letter-spacing:.02em; }
+.caret{
+  display:inline-block; width:9px; height:1.05em; vertical-align:-2px;
+  background:var(--copper); margin-left:3px; animation:blink 1.05s steps(2) infinite;
+}
+@keyframes blink{ 50%{ opacity:0; } }
+
+.tagline{
+  font-size:clamp(1.02rem,1.55vw,1.16rem); color:var(--text-dim);
+  max-width:56ch; margin-bottom:clamp(20px,3vh,32px);
+}
+.tagline .lead{ font-family:var(--font-serif); font-style:italic; font-weight:300; font-size:1.16em; }
+.tagline strong{ color:var(--text); font-weight:800; }
+.tagline .hl{ color:var(--brass); font-weight:800; }
+
+.hero-actions{ display:flex; flex-wrap:wrap; gap:13px; margin-bottom:clamp(22px,3.4vh,40px); }
+.btn{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:13px 24px; border-radius:99px; font-weight:800; font-size:.94rem;
+  border:1px solid transparent; cursor:pointer;
+  transition:transform .35s var(--ease-spring), box-shadow .35s ease, background .3s ease, border-color .3s ease;
+}
+.btn-primary{
+  background:linear-gradient(100deg,var(--copper),var(--bronze));
+  color:var(--ink); box-shadow:0 10px 34px -12px rgba(var(--copper-rgb),.85);
+}
+.btn-primary:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 18px 44px -12px rgba(var(--copper-rgb),.95); }
+.btn-ghost{ background:rgba(255,255,255,.03); border-color:var(--line-hi); color:var(--text); }
+.btn-ghost:hover{ transform:translateY(-3px); border-color:var(--copper); background:rgba(var(--copper-rgb),.08); }
+
+/* hero metric strip */
+.hero-metrics{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  background:var(--line); border:1px solid var(--line);
+  border-radius:var(--r-md); overflow:hidden;
+}
+@media (max-width:640px){ .hero-metrics{ grid-template-columns:repeat(2,1fr); } }
+.hm{
+  background:var(--bg-elev); padding:18px 16px;
+  transition:background .3s ease;
+}
+.hm:hover{ background:var(--bg-elev-2); }
+.hm-val{
+  font-size:clamp(1.35rem,3.4vw,1.85rem); font-weight:800; letter-spacing:-.03em;
+  font-family:var(--font-mono);
+}
+.hm:nth-child(1) .hm-val{ color:var(--copper); }
+.hm:nth-child(2) .hm-val{ color:var(--gold); }
+.hm:nth-child(3) .hm-val{ color:var(--brass); }
+.hm:nth-child(4) .hm-val{ color:var(--gold); }
+.hm-lab{ font-family:var(--font-serif); font-style:italic; font-size:.94rem; color:var(--text-dim); letter-spacing:.01em; margin-top:4px; }
+
+/* hero 3D stage */
+.hero-stage{ position:relative; aspect-ratio:1; max-width:460px; margin-inline:auto; width:100%; }
+/* rings pick up the orb's iridescent ramp rather than the page copper */
+.hero-stage-ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px solid rgba(91,140,247,.17);
+  animation:ringPulse 6s ease-in-out infinite;
+}
+.hero-stage-ring:nth-child(2){ inset:11%; border-color:rgba(164,107,245,.17); animation-delay:-2s; }
+.hero-stage-ring:nth-child(3){ inset:22%; border-color:rgba(47,212,196,.15); animation-delay:-4s; }
+@keyframes ringPulse{ 0%,100%{ transform:scale(1); opacity:.85; } 50%{ transform:scale(1.045); opacity:.35; } }
+.hero-orb-canvas{ position:absolute; inset:0; }
+/* Match .proj-visual canvas: without this the canvas keeps its intrinsic buffer
+   size and sits offset inside the stage instead of filling it. */
+.hero-orb-canvas canvas{ display:block; width:100%; height:100%; }
+
+/* ============================================================
+   MASCOT (SVG micro-character)
+   ============================================================ */
+.mascot{ width:60px; height:60px; flex:0 0 auto; cursor:pointer; overflow:visible; }
+.mascot .m-body{ transform-box:fill-box; transform-origin:50% 90%; animation:wobble 3.6s ease-in-out infinite; }
+@keyframes wobble{
+  0%,100%{ transform:rotate(-3.5deg) translateY(0); }
+  50%{ transform:rotate(3.5deg) translateY(-4px); }
+}
+.mascot .m-eye{ transform-box:fill-box; transform-origin:center; animation:blinkEye 5s infinite; }
+@keyframes blinkEye{ 0%,92%,100%{ transform:scaleY(1); } 95%{ transform:scaleY(.12); } }
+.mascot .m-antenna{ transform-box:fill-box; transform-origin:50% 100%; animation:antennaSway 2.4s ease-in-out infinite; }
+@keyframes antennaSway{ 0%,100%{ transform:rotate(-11deg); } 50%{ transform:rotate(11deg); } }
+.mascot .m-glow{ opacity:.35; transition:opacity .35s ease; }
+.mascot:hover .m-glow,
+.metric-card:hover .mascot .m-glow,
+.proj:hover .mascot .m-glow{ opacity:1; }
+.mascot:hover .m-body{ animation-duration:.7s; }
+.mascot .m-blush{ opacity:0; transition:opacity .3s ease; }
+.mascot:hover .m-blush{ opacity:.85; }
+.mascot .m-mouth{ transition:d .3s ease; }
+
+/* ---- "you can call me cherry" label beside the hero orb ---- */
+.hero-sitter-wrap{
+  position:absolute; right:4%; bottom:2%; z-index:3;
+  width:clamp(150px,40%,196px);
+  display:flex; flex-direction:column; align-items:center;
+  pointer-events:none;
+}
+.cherry-tag{
+  margin:2px 0 0; text-align:center;
+  font-family:var(--font-serif); font-style:italic; font-weight:300;
+  font-size:clamp(.9rem,1.25vw,1.08rem);
+  color:var(--text-dim); letter-spacing:.01em; white-space:nowrap;
+}
+.cherry-tag em{
+  font-style:italic; font-weight:600; font-size:1.16em;
+  background:linear-gradient(100deg,#F0BC85,var(--copper) 45%,#E8C860);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+@media (max-width:960px){
+  .cherry-tag{ font-size:.86rem; }
+}
+
+/* ---- Seated chibi + iced coffee (hero) ---- */
+.hero-sitter{ position:relative; width:100%; }
+.hero-sitter .sitter{ width:100%; height:auto; overflow:visible; }
+.hero-sitter .s-body{
+  transform-box:fill-box; transform-origin:50% 100%;
+  animation:sitBreathe 4.6s ease-in-out infinite;
+}
+@keyframes sitBreathe{
+  0%,100%{ transform:translateY(0) rotate(-.5deg); }
+  50%    { transform:translateY(-1.6px) rotate(.5deg); }
+}
+.hero-sitter .s-head{
+  transform-box:fill-box; transform-origin:50% 100%;
+  animation:sipLean 5.2s ease-in-out infinite;
+}
+/* she leans to the straw, sips, settles back */
+@keyframes sipLean{
+  0%,58%,100%{ transform:rotate(0) translateX(0); }
+  68%,86%    { transform:rotate(2.6deg) translateX(1.4px); }
+}
+.hero-sitter .s-mouth{
+  transform-box:fill-box; transform-origin:center;
+  animation:sipMouth 5.2s ease-in-out infinite;
+}
+@keyframes sipMouth{
+  0%,60%,100%{ transform:scale(1); }
+  70%        { transform:scale(.72,1.25); }
+  80%        { transform:scale(1.05,.85); }
+}
+.hero-sitter .s-eye{
+  transform-box:fill-box; transform-origin:center;
+  animation:chibiBlink 6.1s infinite;
+}
+.hero-sitter .s-bun{
+  transform-box:fill-box; transform-origin:50% 100%;
+  animation:bunSway 3.4s ease-in-out infinite;
+}
+
+/* the cup: tips, rotates and drops once .spilled is set */
+.s-cup{
+  transform-box:fill-box; transform-origin:50% 96%;
+  transition:transform 1.15s cubic-bezier(.34,.06,.36,1);
+}
+.hero-sitter.spilled .s-cup{
+  /* falls off her hand, rotates past horizontal, lands left of her */
+  transform:translate(-16px, 26px) rotate(112deg);
+}
+.hero-sitter.spilled .s-arm{ transition:d .6s ease; }
+/* brew drains out as it tips */
+#brewRect{ transition:height 1s ease-out .25s, y 1s ease-out .25s; }
+.hero-sitter.spilled .cup-ice{ opacity:0; transition:opacity .35s ease .3s; }
+.hero-sitter.spilled .cup-straw{ opacity:.5; transition:opacity .5s ease; }
+/* she notices */
+.hero-sitter.spilled .s-mouth{ animation:none; transform:scale(1.5,1.7); }
+.hero-sitter.spilled .s-head{ animation:none; transform:rotate(-5deg); transition:transform .5s var(--ease-spring); }
+
+@media (max-width:960px){
+  .hero-sitter-wrap{ right:2%; bottom:1%; width:clamp(124px,33%,160px); }
+}
+@media (prefers-reduced-motion:reduce){
+  .s-cup{ transition:none; }
+}
+
+/* ---- Ice cubes tumbling across the hero + coffee flooding contact ---- */
+#iceCanvas{
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:none; z-index:4;
+}
+.hero{ position:relative; }
+
+
+/* floating decorative mascots */
+.float-mascot{
+  position:absolute; z-index:2; opacity:.75;
+  animation:floatY 7s ease-in-out infinite;
+  transition:opacity .4s ease, transform .4s var(--ease-spring);
+}
+.float-mascot:hover{ opacity:1; transform:scale(1.16) rotate(-6deg); }
+@keyframes floatY{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-16px); } }
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about-grid{ display:grid; grid-template-columns:1.35fr .65fr; gap:clamp(26px,4vw,52px); align-items:start; }
+@media (max-width:900px){ .about-grid{ grid-template-columns:1fr; } }
+.about-body p + p{ margin-top:16px; }
+.about-body{ color:var(--text-dim); font-size:1.04rem; }
+.about-body strong{ color:var(--text); }
+.about-body em{ color:var(--copper); font-family:var(--font-serif); font-style:italic; font-weight:600; font-size:1.1em; }
+
+.info-card{
+  background:linear-gradient(160deg,rgba(31,26,32,.92),rgba(23,20,25,.8));
+  border:1px solid var(--line); border-radius:var(--r-lg);
+  padding:24px; backdrop-filter:blur(10px);
+}
+.info-row{ display:flex; gap:13px; padding:13px 0; border-bottom:1px dashed var(--line); }
+.info-row:last-child{ border-bottom:0; padding-bottom:0; }
+.info-row:first-child{ padding-top:0; }
+.info-ic{
+  width:34px; height:34px; border-radius:10px; flex:0 0 auto;
+  display:grid; place-items:center; font-size:1rem;
+  background:rgba(var(--copper-rgb),.1); border:1px solid rgba(var(--copper-rgb),.22);
+}
+.info-k{ font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.2em; color:var(--text-mute); }
+.info-v{ font-weight:600; font-size:.95rem; }
+.info-v small{ display:block; color:var(--text-dim); font-weight:400; font-family:var(--font-serif); font-style:italic; font-size:.98rem; line-height:1.4; margin-top:1px; }
+
+/* metric cards row */
+.metrics-row{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:16px; margin-top:42px;
+}
+.metric-card{
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg-elev); border:1px solid var(--line);
+  border-radius:var(--r-md); padding:18px;
+  transition:transform .4s var(--ease-out), border-color .4s ease, box-shadow .4s ease;
+}
+.metric-card:hover{
+  transform:translateY(-5px); border-color:var(--line-hi);
+  box-shadow:0 18px 40px -20px rgba(0,0,0,.9);
+}
+.metric-card .mc-val{ font-family:var(--font-mono); font-size:1.5rem; font-weight:800; letter-spacing:-.03em; }
+.metric-card .mc-lab{ font-family:var(--font-serif); font-style:italic; font-size:1rem; line-height:1.35; color:var(--text-dim); }
+.metric-card:nth-child(1) .mc-val{ color:var(--copper); }
+.metric-card:nth-child(2) .mc-val{ color:var(--gold); }
+.metric-card:nth-child(3) .mc-val{ color:var(--brass); }
+
+/* ============================================================
+   SKILLS
+   ============================================================ */
+.skills-grid{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:20px; margin-top:44px;
+}
+.skill-cat{
+  position:relative; overflow:hidden;
+  background:var(--bg-elev); border:1px solid var(--line);
+  border-radius:var(--r-lg); padding:26px;
+  transition:transform .45s var(--ease-out), border-color .45s ease;
+}
+.skill-cat::before{
+  content:''; position:absolute; inset:0 0 auto 0; height:2px;
+  background:var(--accent, var(--copper)); opacity:.65;
+  transform:scaleX(.25); transform-origin:left;
+  transition:transform .55s var(--ease-out), opacity .4s ease;
+}
+.skill-cat:hover{ transform:translateY(-6px); border-color:var(--line-hi); }
+.skill-cat:hover::before{ transform:scaleX(1); opacity:1; box-shadow:0 0 14px var(--accent); }
+.skill-cat[data-accent="copper"]{ --accent:var(--copper); --accent-lit:#F0BC85; }
+.skill-cat[data-accent="gold"]{ --accent:var(--gold); --accent-lit:#E8C860; }
+.skill-cat[data-accent="brass"]{ --accent:var(--brass); --accent-lit:#DFC04F; }
+
+.sc-head{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.sc-ic{
+  width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--accent) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color:var(--accent-lit,var(--accent));
+}
+.sc-title{ font-size:1.06rem; }
+.sc-count{ font-family:var(--font-mono); font-size:.74rem; color:var(--text-mute); }
+
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.chip{
+  font-family:var(--font-mono); font-size:.78rem; padding:5px 11px;
+  border-radius:7px; background:rgba(255,255,255,.04);
+  border:1px solid var(--line); color:var(--text-dim);
+  transition:transform .3s var(--ease-spring), color .3s ease, border-color .3s ease, background .3s ease;
+}
+.chip:hover{
+  transform:translateY(-3px) scale(1.05);
+  color:var(--accent); border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* glowing stat bars */
+.bars{ display:grid; gap:13px; }
+.bar-row .bar-top{ display:flex; justify-content:space-between; align-items:baseline; font-size:.82rem; margin-bottom:6px; }
+.bar-row .bar-top span:last-child{ font-family:var(--font-mono); color:var(--accent-lit,var(--accent)); }
+.bar-track{
+  height:7px; border-radius:99px; background:rgba(255,255,255,.06);
+  overflow:hidden; position:relative;
+}
+.bar-fill{
+  height:100%; width:0; border-radius:99px;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, transparent), var(--accent));
+  box-shadow:0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+  transition:width 1.5s var(--ease-out);
+  position:relative;
+}
+.bar-fill::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:translateX(-100%); animation:sheen 2.6s ease-in-out infinite;
+}
+@keyframes sheen{ 0%{ transform:translateX(-100%); } 60%,100%{ transform:translateX(220%); } }
+
+/* ============================================================
+   PROJECTS (scrollytelling)
+   ============================================================ */
+.projects-list{ display:grid; gap:clamp(50px,8vw,110px); margin-top:52px; }
+.proj{
+  display:grid; grid-template-columns:1fr 1fr; gap:clamp(26px,4vw,54px);
+  align-items:center;
+}
+.proj:nth-child(even) .proj-visual{ order:-1; }
+@media (max-width:940px){
+  .proj{ grid-template-columns:1fr; }
+  .proj:nth-child(even) .proj-visual{ order:0; }
+}
+
+/* 3D visual container */
+.proj-visual{
+  position:relative; aspect-ratio:1/.92; border-radius:var(--r-lg);
+  overflow:hidden; border:1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 68%),
+    linear-gradient(165deg,#17131A,#0C0A0E);
+  transition:border-color .5s ease, box-shadow .5s ease, transform .5s var(--ease-out);
+  cursor:grab;
+  touch-action:pan-y;
+}
+.proj-visual:hover{
+  border-color:color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+             0 30px 70px -30px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.proj-visual:active{ cursor:grabbing; }
+.proj-visual canvas{ display:block; width:100%; height:100%; }
+.pv-grid{
+  position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:34px 34px;
+  mask-image:radial-gradient(circle at 50% 50%, #000 30%, transparent 78%);
+}
+.pv-badge{
+  position:absolute; top:14px; left:14px; z-index:3;
+  font-family:var(--font-mono); font-size:.68rem; letter-spacing:.13em;
+  text-transform:uppercase; padding:6px 11px; border-radius:99px;
+  background:rgba(12,10,14,.85); backdrop-filter:blur(8px);
+  border:1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  color:var(--accent);
+}
+.pv-hint{
+  position:absolute; bottom:12px; right:14px; z-index:3;
+  font-family:var(--font-mono); font-size:.66rem; color:var(--text-mute);
+  opacity:0; transition:opacity .4s ease; pointer-events:none;
+}
+.proj-visual:hover .pv-hint{ opacity:1; }
+
+/* project body */
+.proj-num{
+  font-family:var(--font-mono); font-size:.78rem; color:var(--text-mute);
+  letter-spacing:.2em; margin-bottom:9px;
+}
+.proj h3{ font-size:clamp(1.5rem,3.4vw,2.15rem); margin-bottom:6px; }
+.proj-tag{
+  font-family:var(--font-serif); font-size:1.02rem; font-style:italic;
+  letter-spacing:.01em; color:var(--accent-lit,var(--accent)); margin-bottom:20px;
+}
+/* Each project owns one metal. --accent drives fills/strokes; --accent-lit is the
+   lightened variant used for text, so darker metals stay legible on espresso. */
+.proj[data-accent="copper"]{ --accent:var(--copper); --accent-lit:#F0BC85; }
+.proj[data-accent="gold"]  { --accent:var(--gold);   --accent-lit:#E8C860; }
+.proj[data-accent="brass"] { --accent:var(--brass);  --accent-lit:#DFC04F; }
+.proj[data-accent="bronze"]{ --accent:var(--bronze); --accent-lit:#DE9355; }
+.proj[data-accent="clay"]  { --accent:var(--clay);   --accent-lit:#E09A7B; }
+
+.case{ display:grid; gap:15px; margin-bottom:24px; }
+.case-block{
+  border-left:2px solid var(--line); padding-left:16px;
+  transition:border-color .4s ease;
+}
+.proj:hover .case-block{ border-color:color-mix(in srgb, var(--accent) 40%, transparent); }
+.case-k{
+  font-family:var(--font-mono); font-size:.7rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-mute); margin-bottom:5px;
+  display:flex; align-items:center; gap:7px;
+}
+.case-k b{ color:var(--accent-lit,var(--accent)); font-weight:500; }
+.case-v{ color:var(--text-dim); font-size:.96rem; }
+.case-v strong{ color:var(--text); font-weight:700; }
+
+/* outcome bars */
+.outcomes{
+  background:var(--bg-elev); border:1px solid var(--line);
+  border-radius:var(--r-md); padding:18px; margin-bottom:20px;
+}
+.outcomes-h{
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--font-mono); font-size:.7rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-mute); margin-bottom:15px;
+}
+.o-row + .o-row{ margin-top:13px; }
+.o-top{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:6px; }
+.o-lab{ font-family:var(--font-serif); font-style:italic; font-size:1rem; color:var(--text-dim); }
+.o-val{ font-family:var(--font-mono); font-weight:600; font-size:.95rem; color:var(--accent-lit,var(--accent)); }
+
+/* stat tiles */
+.stat-tiles{ display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:10px; margin-bottom:22px; }
+.tile{
+  background:rgba(255,255,255,.025); border:1px solid var(--line);
+  border-radius:var(--r-sm); padding:13px 14px;
+  transition:transform .35s var(--ease-spring), border-color .35s ease, background .35s ease;
+}
+.tile:hover{
+  transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--accent) 45%, transparent);
+  background:color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.tile-v{ font-family:var(--font-mono); font-size:1.16rem; font-weight:800; color:var(--accent-lit,var(--accent)); letter-spacing:-.03em; }
+.tile-l{ font-family:var(--font-serif); font-style:italic; font-size:.9rem; color:var(--text-mute); letter-spacing:.01em; margin-top:2px; }
+
+.stack{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:22px; }
+.stack .chip{ font-size:.73rem; }
+
+.proj-links{ display:flex; flex-wrap:wrap; gap:11px; }
+.link-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:.86rem; font-weight:700; padding:10px 17px; border-radius:99px;
+  border:1px solid var(--line-hi); background:rgba(255,255,255,.03);
+  transition:transform .35s var(--ease-spring), border-color .3s ease, background .3s ease, color .3s ease;
+}
+.link-btn:hover{
+  transform:translateY(-3px);
+  border-color:var(--accent); color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+/* informational badge, not a link — no hover lift, no pointer */
+.link-btn.is-static{
+  color:var(--text-mute); border-style:dashed; cursor:default;
+  font-weight:600; font-size:.8rem;
+}
+.link-btn.is-static:hover{ transform:none; border-color:var(--line-hi); color:var(--text-mute); background:rgba(255,255,255,.03); }
+
+/* ============================================================
+   CONTACT / FOOTER
+   ============================================================ */
+.contact{ text-align:center; }
+.contact-inner{
+  position:relative; overflow:hidden;
+  border:1px solid var(--line); border-radius:var(--r-lg);
+  background:linear-gradient(165deg,rgba(31,26,32,.88),rgba(15,14,19,.75));
+  padding:clamp(38px,6vw,72px) clamp(22px,4vw,52px);
+  backdrop-filter:blur(12px);
+}
+.contact-inner::before{
+  content:''; position:absolute; width:520px; height:520px; left:50%; top:-70%;
+  transform:translateX(-50%);
+  background:radial-gradient(circle, rgba(var(--copper-rgb),.14), transparent 68%);
+  pointer-events:none;
+}
+.contact h2{ font-size:clamp(1.9rem,5vw,3.1rem); margin-bottom:14px; }
+.contact p{ color:var(--text-dim); max-width:50ch; margin:0 auto 34px;
+  font-family:var(--font-serif); font-style:italic; font-weight:300; font-size:1.3rem; line-height:1.5; }
+.socials{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.social{
+  display:inline-flex; align-items:center; gap:9px;
+  padding:12px 20px; border-radius:99px;
+  border:1px solid var(--line-hi); background:rgba(255,255,255,.03);
+  font-weight:700; font-size:.9rem;
+  transition:transform .35s var(--ease-spring), border-color .3s ease, color .3s ease, background .3s ease, box-shadow .3s ease;
+}
+.social:hover{ transform:translateY(-4px) scale(1.03); }
+.social[data-c="copper"]:hover{ border-color:var(--copper); color:var(--copper); background:rgba(var(--copper-rgb),.09); box-shadow:0 12px 30px -14px rgba(var(--copper-rgb),.8); }
+.social[data-c="gold"]:hover{ border-color:var(--gold); color:var(--gold); background:rgba(var(--gold-rgb),.09); box-shadow:0 12px 30px -14px rgba(var(--gold-rgb),.8); }
+.social[data-c="bronze"]:hover{ border-color:var(--bronze); color:#D98C4A; background:rgba(var(--bronze-rgb),.12); box-shadow:0 12px 30px -14px rgba(var(--bronze-rgb),.85); }
+.social[data-c="clay"]:hover{ border-color:var(--clay); color:var(--clay); background:rgba(var(--clay-rgb),.1); box-shadow:0 12px 30px -14px rgba(var(--clay-rgb),.8); }
+
+.footer{ border-top:1px solid var(--line); padding-block:30px; }
+.footer-inner{
+  display:flex; flex-wrap:wrap; gap:14px;
+  align-items:center; justify-content:space-between;
+  font-size:.84rem; color:var(--text-mute);
+}
+.footer-inner .mono{ font-size:.78rem; }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease-out), transform .8s var(--ease-out); }
+.reveal.in{ opacity:1; transform:none; }
+.reveal.d1{ transition-delay:.09s; } .reveal.d2{ transition-delay:.18s; }
+.reveal.d3{ transition-delay:.27s; } .reveal.d4{ transition-delay:.36s; }
+
+/* scroll progress */
+.progress{
+  position:fixed; top:0; left:0; height:2px; z-index:200; width:0;
+  background:linear-gradient(90deg,var(--copper),var(--gold),var(--brass));
+  box-shadow:0 0 10px rgba(var(--copper-rgb),.8);
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  html{ scroll-behavior:auto; }
+  .reveal{ opacity:1; transform:none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<!-- Global WebGL background -->
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="atmos" aria-hidden="true"></div>
+
+<div class="page">
+
+<!-- ============================ NAV ============================ -->
+<nav class="nav" id="nav" aria-label="Primary">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#hero">
+      <!-- Chibi avatar: messy bun, round glasses, dungarees, thinking pose -->
+      <svg class="chibi" viewBox="8 0 48 48" role="img" aria-label="Chibi avatar of Charithra">
+        <defs>
+          <linearGradient id="hairG" x1="0" y1="0" x2=".6" y2="1">
+            <stop offset="0" stop-color="#6B4636"/><stop offset=".55" stop-color="#4E3226"/><stop offset="1" stop-color="#3A241B"/>
+          </linearGradient>
+          <linearGradient id="skinG" x1=".2" y1="0" x2=".8" y2="1">
+            <stop offset="0" stop-color="#FFE0C4"/><stop offset="1" stop-color="#F3C6A2"/>
+          </linearGradient>
+          <linearGradient id="denimG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7FA0C4"/><stop offset="1" stop-color="#5B7DA6"/>
+          </linearGradient>
+          <radialGradient id="chibiGlow" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stop-color="var(--copper)" stop-opacity=".55"/>
+            <stop offset="1" stop-color="var(--copper)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <circle class="c-glow" cx="32" cy="34" r="30" fill="url(#chibiGlow)"/>
+
+        <g class="c-body">
+          <!-- messy top bun + stray wisps -->
+          <g class="c-bun">
+            <circle cx="34" cy="9" r="7.4" fill="url(#hairG)"/>
+            <circle cx="28" cy="11" r="4.2" fill="url(#hairG)"/>
+            <circle cx="40" cy="12" r="3.6" fill="url(#hairG)"/>
+            <path d="M42 6q5-3 6 2" stroke="#5B3A2C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M25 6q-4-2-5 3" stroke="#5B3A2C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <!-- ears -->
+          <ellipse cx="17.5" cy="31" rx="2.4" ry="3.2" fill="#F3C6A2"/>
+          <ellipse cx="46.5" cy="31" rx="2.4" ry="3.2" fill="#F3C6A2"/>
+
+          <!-- face -->
+          <path d="M18 26q0-12 14-12t14 12q0 14-14 17T18 26Z" fill="url(#skinG)"/>
+
+          <!-- side-swept fringe -->
+          <path d="M18 25q1-12 14-12t14 12q-3-7-9-6-4 3-9 1-4 2-4 6-3-2-6-1Z" fill="url(#hairG)"/>
+          <path d="M18.5 24q3-2 6 1" stroke="#3A241B" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".7"/>
+
+          <!-- round glasses -->
+          <g class="c-glasses">
+            <circle cx="25.5" cy="31.5" r="7" fill="#BFE2F0" fill-opacity=".16" stroke="var(--copper)" stroke-width="1.7"/>
+            <circle cx="39.5" cy="31.5" r="7" fill="#BFE2F0" fill-opacity=".16" stroke="var(--copper)" stroke-width="1.7"/>
+            <path d="M32.5 31.5h-0.9M18.6 30.4l-1.6-.6M45.4 30.4l1.6-.6" stroke="var(--copper)" stroke-width="1.5" stroke-linecap="round"/>
+          </g>
+
+          <!-- big chibi eyes behind the lenses -->
+          <g class="c-eyes">
+            <ellipse class="c-eye" cx="25.6" cy="32" rx="3.5" ry="4" fill="#3A2A22"/>
+            <ellipse class="c-eye" cx="39.4" cy="32" rx="3.5" ry="4" fill="#3A2A22"/>
+            <circle cx="26.9" cy="30.5" r="1.35" fill="#fff"/>
+            <circle cx="40.7" cy="30.5" r="1.35" fill="#fff"/>
+            <circle cx="24.6" cy="33.6" r=".62" fill="#fff" opacity=".75"/>
+            <circle cx="38.4" cy="33.6" r=".62" fill="#fff" opacity=".75"/>
+          </g>
+
+          <!-- brows, blush, smile -->
+          <path d="M22 24.6q3.4-1.7 6.6-.5" stroke="#4E3226" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M36.4 24.1q3.2-1.2 6.6.5" stroke="#4E3226" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <ellipse class="c-blush" cx="21" cy="37.4" rx="3" ry="1.9" fill="#F09A8A" opacity=".55"/>
+          <ellipse class="c-blush" cx="44" cy="37.4" rx="3" ry="1.9" fill="#F09A8A" opacity=".55"/>
+          <path class="c-smile" d="M29.5 40.2q2.5 2.2 5 0" stroke="#B4705C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+          <!-- striped tee + denim dungarees -->
+          <path d="M22 50q0-6 10-6t10 6v8H22Z" fill="#F6F1E6"/>
+          <path d="M26 50h12v8H26Z" fill="url(#denimG)"/>
+          <path d="M26.6 50.4 29 45m8.8 5.4L35.4 45" stroke="url(#denimG)" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="28" cy="51.6" r=".8" fill="#F0D9A8"/>
+          <circle cx="36" cy="51.6" r=".8" fill="#F0D9A8"/>
+
+          <!-- thinking arm: rooted at the shoulder, finger up to the cheek -->
+          <g class="c-hand">
+            <path d="M41.5 51.5q6-1.5 6.5-7.5" stroke="#F3C6A2" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+            <circle cx="48" cy="42.4" r="2.9" fill="url(#skinG)"/>
+            <path d="M47.6 40q.6-2.4 2.2-3.4" stroke="#F3C6A2" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          </g>
+        </g>
+      </svg>
+      <span>Charithra&nbsp;G</span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero" class="nav-a">Hero</a></li>
+      <li><a href="#about" class="nav-a">About</a></li>
+      <li><a href="#skills" class="nav-a">Skills</a></li>
+      <li><a href="#projects" class="nav-a">Projects</a></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="hero" aria-labelledby="hero-title">
+  <!-- ice cubes tumble across this canvas after the cup is knocked over -->
+  <canvas id="iceCanvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="status-pill reveal">
+        <span class="dot-live" aria-hidden="true"></span>
+        Open to AI/ML Engineering roles &middot; Bangalore / Remote
+      </p>
+
+      <h1 id="hero-title" class="reveal d1">
+        I build <span class="grad-text it">neuromorphic&nbsp;AI</span><br>
+        that ships <span class="it it-thin">to</span> production.
+      </h1>
+
+      <p class="hero-role reveal d1">
+        <span aria-hidden="true">&gt;</span>
+        <span class="typed" id="typed">AI/ML Engineer</span><span class="caret" aria-hidden="true"></span>
+        <span class="sr-only">AI/ML Engineer, Multi-Agent Systems Architect, Neuromorphic Computing Researcher</span>
+      </p>
+
+      <p class="tagline reveal d2">
+        <span class="lead">Four production-grade systems spanning</span> <strong>spiking neural
+        networks</strong>, <strong>reinforcement learning</strong>, and
+        <strong>7-agent orchestration</strong> <span class="lead">— delivering</span>
+        <span class="hl">96% threat-detection accuracy</span> <span class="lead">at</span>
+        <span class="hl">500K events/sec</span>, <span class="hl">$2.3M</span>
+        <span class="lead">in simulated breach losses prevented, and</span>
+        <span class="hl">60% lower energy draw</span> <span class="lead">on edge healthcare hardware.</span>
+      </p>
+
+      <div class="hero-actions reveal d3">
+        <a class="btn btn-primary" href="#projects">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          View case studies
+        </a>
+        <a class="btn btn-ghost" href="mailto:charithra754@gmail.com">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg>
+          Get in touch
+        </a>
+      </div>
+
+      <div class="hero-metrics reveal d4" role="list" aria-label="Headline results">
+        <div class="hm" role="listitem"><div class="hm-val" data-count="96" data-suffix="%">0%</div><div class="hm-lab">Detection accuracy</div></div>
+        <div class="hm" role="listitem"><div class="hm-val" data-count="500" data-suffix="K/s">0</div><div class="hm-lab">Events processed</div></div>
+        <div class="hm" role="listitem"><div class="hm-val" data-count="23.4" data-suffix="%" data-dec="1">0%</div><div class="hm-lab">Throughput gain</div></div>
+        <div class="hm" role="listitem"><div class="hm-val" data-count="2.3" data-prefix="$" data-suffix="M" data-dec="1">$0M</div><div class="hm-lab">Losses prevented</div></div>
+      </div>
+    </div>
+
+    <!-- Hero 3D stage -->
+    <div class="hero-stage reveal d2">
+      <div class="hero-stage-ring" aria-hidden="true"></div>
+      <div class="hero-stage-ring" aria-hidden="true"></div>
+      <div class="hero-stage-ring" aria-hidden="true"></div>
+      <div class="hero-orb-canvas" id="heroOrb" data-viz="hero" aria-hidden="true"></div>
+
+      <!-- Seated chibi sipping an iced coffee. The cup tips over and spills
+           when the Contact section is reached (see initCoffeeSpill). -->
+      <div class="hero-sitter-wrap">
+      <div class="hero-sitter" id="heroSitter">
+        <svg class="sitter" viewBox="0 0 120 108" role="img" aria-label="Chibi illustration of Charithra sitting with an iced coffee">
+          <defs>
+            <linearGradient id="sHair" x1="0" y1="0" x2=".6" y2="1">
+              <stop offset="0" stop-color="#6B4636"/><stop offset=".55" stop-color="#4E3226"/><stop offset="1" stop-color="#3A241B"/>
+            </linearGradient>
+            <linearGradient id="sSkin" x1=".2" y1="0" x2=".8" y2="1">
+              <stop offset="0" stop-color="#FFE0C4"/><stop offset="1" stop-color="#F3C6A2"/>
+            </linearGradient>
+            <linearGradient id="sDenim" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#7FA0C4"/><stop offset="1" stop-color="#5B7DA6"/>
+            </linearGradient>
+            <!-- cold-brew gradient inside the glass -->
+            <linearGradient id="sBrew" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#7B4A2A"/><stop offset=".45" stop-color="#4A2A16"/><stop offset="1" stop-color="#2E1A0E"/>
+            </linearGradient>
+            <radialGradient id="sGlow" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="var(--copper)" stop-opacity=".4"/>
+              <stop offset="1" stop-color="var(--copper)" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <ellipse cx="58" cy="96" rx="34" ry="6" fill="#000" opacity=".45"/>
+          <circle cx="58" cy="54" r="50" fill="url(#sGlow)"/>
+
+          <g class="s-body">
+            <!-- legs, crossed and sitting -->
+            <path d="M34 88q6-16 24-14t22 14Z" fill="url(#sDenim)"/>
+            <path d="M30 88q10 4 24 3t26-3" stroke="#4B6A90" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+            <!-- torso: striped tee + dungarees -->
+            <path d="M40 78q-2-22 18-22t18 22Z" fill="#F6F1E6"/>
+            <path d="M48 78V58h20v20Z" fill="url(#sDenim)"/>
+            <path d="M49 58.5 53 50m18.5 8.5L67 50" stroke="url(#sDenim)" stroke-width="3.4" stroke-linecap="round"/>
+            <circle cx="52" cy="61" r="1.1" fill="#F0D9A8"/>
+            <circle cx="64" cy="61" r="1.1" fill="#F0D9A8"/>
+
+            <!-- far arm resting -->
+            <path d="M42 62q-9 4-9 14" stroke="#F3C6A2" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+            <!-- head -->
+            <g class="s-head">
+              <g class="s-bun">
+                <circle cx="60" cy="12" r="8.4" fill="url(#sHair)"/>
+                <circle cx="53" cy="14.5" r="4.8" fill="url(#sHair)"/>
+                <circle cx="67" cy="15.5" r="4.2" fill="url(#sHair)"/>
+                <path d="M69 8.5q5.5-3.5 6.5 2" stroke="#5B3A2C" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+                <path d="M50 8.5q-4.5-2.5-5.5 3" stroke="#5B3A2C" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+              </g>
+              <ellipse cx="42.5" cy="34" rx="2.7" ry="3.6" fill="#F3C6A2"/>
+              <ellipse cx="77.5" cy="34" rx="2.7" ry="3.6" fill="#F3C6A2"/>
+              <path d="M43 29q0-13.5 17-13.5T77 29q0 16-17 19.5T43 29Z" fill="url(#sSkin)"/>
+              <path d="M43 28q1-13.5 17-13.5T77 28q-3.5-8-11-7-5 3.5-11 1-5 2.5-5 7-3.5-2.5-7-1Z" fill="url(#sHair)"/>
+              <g class="s-glasses">
+                <circle cx="51.5" cy="35" r="8" fill="#BFE2F0" fill-opacity=".15" stroke="var(--copper)" stroke-width="1.9"/>
+                <circle cx="68.5" cy="35" r="8" fill="#BFE2F0" fill-opacity=".15" stroke="var(--copper)" stroke-width="1.9"/>
+                <path d="M59.5 35h1M43.5 33.6l-1.8-.7M76.5 33.6l1.8-.7" stroke="var(--copper)" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+              <g class="s-eyes">
+                <ellipse class="s-eye" cx="51.6" cy="35.5" rx="4" ry="4.6" fill="#3A2A22"/>
+                <ellipse class="s-eye" cx="68.4" cy="35.5" rx="4" ry="4.6" fill="#3A2A22"/>
+                <circle cx="53.1" cy="33.8" r="1.5" fill="#fff"/>
+                <circle cx="69.9" cy="33.8" r="1.5" fill="#fff"/>
+              </g>
+              <path d="M47 26.6q4-2 7.6-.6" stroke="#4E3226" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+              <path d="M65.4 26q3.6-1.4 7.6.6" stroke="#4E3226" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+              <ellipse class="s-blush" cx="45.5" cy="41.5" rx="3.4" ry="2.1" fill="#F09A8A" opacity=".55"/>
+              <ellipse class="s-blush" cx="74.5" cy="41.5" rx="3.4" ry="2.1" fill="#F09A8A" opacity=".55"/>
+              <!-- mouth: lips on the straw, opens slightly while sipping -->
+              <ellipse class="s-mouth" cx="60" cy="45" rx="2.2" ry="1.5" fill="#B4705C"/>
+            </g>
+
+            <!-- near arm reaching up to hold the cup -->
+            <path class="s-arm" d="M74 64q12-2 14-16" stroke="#F3C6A2" stroke-width="5.2" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <!-- ICED COFFEE: tips and empties on scroll to Contact -->
+          <g class="s-cup" id="heroCup">
+            <!-- straw runs up to her lips -->
+            <path class="cup-straw" d="M88 40 L69 43.5" stroke="#E8E2D6" stroke-width="2.6" stroke-linecap="round"/>
+            <path class="cup-straw" d="M88 40 L91 26" stroke="#E8E2D6" stroke-width="2.6" stroke-linecap="round"/>
+            <!-- tumbler -->
+            <path class="cup-glass" d="M80 38h20l-2.6 30q-.4 4-7.4 4t-7.4-4Z"
+                  fill="#CFE6F0" fill-opacity=".13" stroke="#DCEAF2" stroke-opacity=".55" stroke-width="1.5"/>
+            <!-- brew level: clipped so it can drain as the cup empties -->
+            <clipPath id="brewClip"><rect id="brewRect" x="80" y="46" width="20" height="26"/></clipPath>
+            <g clip-path="url(#brewClip)">
+              <path d="M80 38h20l-2.6 30q-.4 4-7.4 4t-7.4-4Z" fill="url(#sBrew)"/>
+            </g>
+            <!-- ice inside the glass (separate from the tumbling cubes) -->
+            <g class="cup-ice">
+              <rect x="83.5" y="47" width="6.4" height="6.4" rx="1.6" fill="#EAF6FB" opacity=".8" transform="rotate(-14 86.7 50.2)"/>
+              <rect x="90.5" y="52" width="6" height="6" rx="1.5" fill="#DCEEF7" opacity=".72" transform="rotate(18 93.5 55)"/>
+              <rect x="84.5" y="57" width="5.6" height="5.6" rx="1.4" fill="#EAF6FB" opacity=".68" transform="rotate(6 87.3 59.8)"/>
+            </g>
+            <!-- condensation -->
+            <circle cx="83" cy="63" r="1" fill="#fff" opacity=".3"/>
+            <circle cx="97" cy="57" r="1.2" fill="#fff" opacity=".26"/>
+            <ellipse class="cup-rim" cx="90" cy="38" rx="10" ry="2.8" fill="#EFF7FB" opacity=".22"/>
+          </g>
+        </svg>
+      </div>
+        <p class="cherry-tag">you can call me <em>cherry</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ABOUT ============================ -->
+<section id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <p class="eyebrow reveal">01 &mdash; About</p>
+    <h2 class="section-title reveal d1" id="about-title">Research <span class="it">depth</span>, engineering <span class="it">discipline</span>.</h2>
+
+    <div class="about-grid" style="margin-top:34px;">
+      <div class="about-body reveal d2">
+        <p>
+          I'm an <strong>AI &amp; Machine Learning engineer</strong> who treats research papers as
+          specifications, not trophies. My work sits where <em>neuromorphic computing</em> meets
+          <em>production systems</em>: spiking neural networks that actually run on edge hardware,
+          reinforcement-learning schedulers that beat classical baselines on real orbital
+          telemetry, and multi-agent architectures with message queues, migrations, and tests
+          behind them.
+        </p>
+        <p>
+          Every project below started from a cost problem. Powerline noise corrupts ECG traces and
+          forces repeat diagnostics. Satellite ground-station contention wastes downlink capacity.
+          Security teams drown in false positives and burn analyst hours. I frame the loss
+          function around the business metric — <strong>latency, throughput, false-positive rate,
+          energy per inference</strong> — then prove the delta with instrumented benchmarks rather
+          than a single cherry-picked accuracy number.
+        </p>
+        <p>
+          The engineering side is non-negotiable: <em>97% test coverage</em> with property-based
+          tests on the SNN framework, Numba JIT for the hot loops, Docker + FastAPI for delivery,
+          TimescaleDB for high-frequency ingest, MLflow for experiment lineage. Research that
+          can't be reproduced or deployed isn't finished.
+        </p>
+      </div>
+
+      <aside class="info-card reveal d3" aria-label="Profile details">
+        <div class="info-row">
+          <span class="info-ic" aria-hidden="true">🎓</span>
+          <div><div class="info-k">Education</div>
+            <div class="info-v">B.E. AI &amp; Machine Learning
+              <small>Ramaiah Institute of Technology · GPA 9.37 / 10</small></div></div>
+        </div>
+        <div class="info-row">
+          <span class="info-ic" aria-hidden="true">📍</span>
+          <div><div class="info-k">Based in</div>
+            <div class="info-v">Bangalore, India<small>Open to remote &amp; hybrid</small></div></div>
+        </div>
+        <div class="info-row">
+          <span class="info-ic" aria-hidden="true">🔬</span>
+          <div><div class="info-k">Focus areas</div>
+            <div class="info-v">Neuromorphic ML<small>SNNs · Multi-agent systems · RL &amp; GNNs</small></div></div>
+        </div>
+        <div class="info-row">
+          <span class="info-ic" aria-hidden="true">🏆</span>
+          <div><div class="info-k">Recognition</div>
+            <div class="info-v">Smart India Hackathon 2025<small>Astraeus orbital scheduler submission</small></div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card reveal d1">
+        <svg class="mascot" viewBox="0 0 64 64" role="img" aria-label="Mascot holding a benchmark chart">
+          <g class="m-body">
+            <g class="m-glow"><rect x="16" y="24" width="32" height="26" rx="10" fill="var(--copper)" opacity=".45"/></g>
+            <rect x="16" y="24" width="32" height="26" rx="10" fill="#1F1A20" stroke="var(--copper)" stroke-width="2"/>
+            <circle class="m-eye" cx="26" cy="35" r="3.2" fill="var(--copper)"/>
+            <circle class="m-eye" cx="38" cy="35" r="3.2" fill="var(--copper)"/>
+            <path class="m-mouth" d="M28 43q4 3 8 0" stroke="var(--brass)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse class="m-blush" cx="20" cy="41" rx="2.6" ry="1.8" fill="var(--clay)"/>
+            <ellipse class="m-blush" cx="44" cy="41" rx="2.6" ry="1.8" fill="var(--clay)"/>
+            <line class="m-antenna" x1="32" y1="24" x2="32" y2="14" stroke="var(--copper)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle class="m-antenna" cx="32" cy="12" r="3" fill="var(--brass)"/>
+          </g>
+        </svg>
+        <div><div class="mc-val" data-count="97" data-suffix="%">0%</div>
+        <div class="mc-lab">Test coverage on the SNN framework</div></div>
+      </div>
+      <div class="metric-card reveal d2">
+        <svg class="mascot" viewBox="0 0 64 64" role="img" aria-label="Mascot with a purple core">
+          <g class="m-body">
+            <g class="m-glow"><circle cx="32" cy="36" r="16" fill="var(--gold)" opacity=".45"/></g>
+            <circle cx="32" cy="36" r="16" fill="#1F1A20" stroke="var(--gold)" stroke-width="2"/>
+            <circle class="m-eye" cx="26" cy="34" r="3.2" fill="var(--gold)"/>
+            <circle class="m-eye" cx="38" cy="34" r="3.2" fill="var(--gold)"/>
+            <path class="m-mouth" d="M27 43q5 4 10 0" stroke="var(--copper)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse class="m-blush" cx="20.5" cy="40" rx="2.6" ry="1.8" fill="var(--clay)"/>
+            <ellipse class="m-blush" cx="43.5" cy="40" rx="2.6" ry="1.8" fill="var(--clay)"/>
+            <line class="m-antenna" x1="32" y1="20" x2="32" y2="11" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle class="m-antenna" cx="32" cy="9" r="3" fill="var(--copper)"/>
+          </g>
+        </svg>
+        <div><div class="mc-val" data-count="8320" data-suffix="+">0</div>
+        <div class="mc-lab">Benchmark runs logged across experiments</div></div>
+      </div>
+      <div class="metric-card reveal d3">
+        <svg class="mascot" viewBox="0 0 64 64" role="img" aria-label="Mascot with lime energy meter">
+          <g class="m-body">
+            <g class="m-glow"><rect x="17" y="23" width="30" height="28" rx="14" fill="var(--brass)" opacity=".42"/></g>
+            <rect x="17" y="23" width="30" height="28" rx="14" fill="#1F1A20" stroke="var(--brass)" stroke-width="2"/>
+            <circle class="m-eye" cx="26" cy="34" r="3.2" fill="var(--brass)"/>
+            <circle class="m-eye" cx="38" cy="34" r="3.2" fill="var(--brass)"/>
+            <path class="m-mouth" d="M28 42q4 4 8 0" stroke="var(--copper)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse class="m-blush" cx="21" cy="40" rx="2.5" ry="1.8" fill="var(--clay)"/>
+            <ellipse class="m-blush" cx="43" cy="40" rx="2.5" ry="1.8" fill="var(--clay)"/>
+            <line class="m-antenna" x1="32" y1="23" x2="32" y2="13" stroke="var(--brass)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle class="m-antenna" cx="32" cy="11" r="3" fill="var(--copper)"/>
+          </g>
+        </svg>
+        <div><div class="mc-val" data-count="60" data-suffix="%">0%</div>
+        <div class="mc-lab">Energy saved vs. conventional inference</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SKILLS ============================ -->
+<section id="skills" aria-labelledby="skills-title">
+  <div class="wrap">
+    <p class="eyebrow reveal">02 &mdash; Skills</p>
+    <h2 class="section-title reveal d1" id="skills-title">The toolchain <span class="it">behind</span> the numbers.</h2>
+    <p class="section-sub reveal d2">
+      Grouped by the role each layer plays in shipping a model: writing it, training it,
+      and keeping it alive under load.
+    </p>
+
+    <div class="skills-grid">
+      <!-- Languages -->
+      <article class="skill-cat reveal d1" data-accent="copper">
+        <header class="sc-head">
+          <span class="sc-ic" aria-hidden="true">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>
+          </span>
+          <div><h3 class="sc-title">Languages &amp; Core Dev</h3>
+          <span class="sc-count">08 competencies</span></div>
+        </header>
+        <div class="chips">
+          <span class="chip">Python 3.11</span><span class="chip">TypeScript</span>
+          <span class="chip">JavaScript</span><span class="chip">C++</span>
+          <span class="chip">C</span><span class="chip">SQL / PostgreSQL</span>
+          <span class="chip">Numba JIT</span><span class="chip">pytest + hypothesis</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div class="bar-top"><span>Python &amp; scientific stack</span><span>95%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="95"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>TypeScript / React</span><span>85%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>C / C++ systems</span><span>78%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="78"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ML / DL -->
+      <article class="skill-cat reveal d2" data-accent="gold">
+        <header class="sc-head">
+          <span class="sc-ic" aria-hidden="true">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="17" r="2.4"/><circle cx="19" cy="17" r="2.4"/><path d="M12 7.4v3.2M10.4 12.4 6.6 15M13.6 12.4 17.4 15"/></svg>
+          </span>
+          <div><h3 class="sc-title">ML / Deep Learning</h3>
+          <span class="sc-count">10 competencies</span></div>
+        </header>
+        <div class="chips">
+          <span class="chip">PyTorch</span><span class="chip">snnTorch</span>
+          <span class="chip">TensorFlow</span><span class="chip">Scikit-Learn</span>
+          <span class="chip">XGBoost</span><span class="chip">Stable-Baselines3 (PPO)</span>
+          <span class="chip">Graph Neural Nets</span><span class="chip">Liquid Neural Nets</span>
+          <span class="chip">Federated Learning</span><span class="chip">MLflow</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div class="bar-top"><span>Spiking neural networks &amp; STDP</span><span>92%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="92"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>Reinforcement learning (PPO)</span><span>87%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="87"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>Classical ML &amp; gradient boosting</span><span>90%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="90"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Data eng / cloud -->
+      <article class="skill-cat reveal d3" data-accent="brass">
+        <header class="sc-head">
+          <span class="sc-ic" aria-hidden="true">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+          </span>
+          <div><h3 class="sc-title">Data Engineering &amp; Cloud</h3>
+          <span class="sc-count">11 competencies</span></div>
+        </header>
+        <div class="chips">
+          <span class="chip">FastAPI</span><span class="chip">Flask</span>
+          <span class="chip">Docker</span><span class="chip">Kubernetes</span>
+          <span class="chip">RabbitMQ</span><span class="chip">TimescaleDB</span>
+          <span class="chip">PostgreSQL</span><span class="chip">Supabase</span>
+          <span class="chip">Socket.IO</span><span class="chip">MCP</span>
+          <span class="chip">CesiumJS</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row">
+            <div class="bar-top"><span>API &amp; microservice design</span><span>91%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="91"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>Time-series ingest at scale</span><span>84%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="84"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-top"><span>Containerized deployment</span><span>88%</span></div>
+            <div class="bar-track"><div class="bar-fill" data-w="88"></div></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PROJECTS ============================ -->
+<section id="projects" aria-labelledby="projects-title">
+  <div class="wrap">
+    <p class="eyebrow reveal">03 &mdash; Case Studies</p>
+    <h2 class="section-title reveal d1" id="projects-title">Four problems, four <span class="it">measured</span> deltas.</h2>
+    <p class="section-sub reveal d2">
+      Each card states the pain point, the architecture chosen to attack it, and the instrumented
+      outcome. Drag any visual to inspect the model &mdash; they respond to scroll and cursor.
+    </p>
+
+    <div class="projects-list">
+
+      <!-- ========== PROJECT 1: NeuroSoc (fraud/anomaly → wireframe sphere) ========== -->
+      <article class="proj reveal" data-accent="clay">
+        <div class="proj-visual" data-viz="heatmap" aria-label="Interactive 3D wireframe anomaly surface representing threat-detection topology">
+          <span class="pv-badge">Anomaly topology</span>
+          <span class="pv-hint">drag to rotate · scroll to morph</span>
+          <div class="pv-grid" aria-hidden="true"></div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-num">CASE 01 / 04</p>
+          <h3>NeuroSoc</h3>
+          <p class="proj-tag">Neuromorphic Security Operations Center</p>
+
+          <div class="case">
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Business problem</div>
+              <p class="case-v">
+                SOC analysts triage tens of thousands of alerts daily, and legacy signature engines
+                fire <strong>false positives on the majority of them</strong>. The cost isn't the tooling —
+                it's the analyst hours burned and the genuine intrusion that slips past a
+                fatigued queue. A single missed breach in the simulated enterprise carried a
+                <strong>$2.3M</strong> exposure.
+              </p>
+            </div>
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Technical approach</div>
+              <p class="case-v">
+                Spiking neural networks (snnTorch) encode network telemetry as spike trains so
+                <strong>temporal attack signatures</strong> are native to the model, not bolted on with
+                sliding windows. Liquid neural nets handle concept drift; XGBoost provides a
+                calibrated second opinion. Federated learning trains across tenants without
+                moving raw logs, and lattice-based crypto keeps the alert bus quantum-resistant.
+                Shipped on Docker + Kubernetes behind FastAPI with a React console.
+              </p>
+            </div>
+          </div>
+
+          <div class="outcomes">
+            <div class="outcomes-h"><span>Quantified outcomes</span><span>measured</span></div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Detection accuracy</span><span class="o-val">96%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="96"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Mean time to detect (reduction)</span><span class="o-val">−85%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Mean time to respond (reduction)</span><span class="o-val">−70%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">False-positive rate</span><span class="o-val">2%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="12"></div></div>
+            </div>
+          </div>
+
+          <div class="stat-tiles">
+            <div class="tile"><div class="tile-v">500K/s</div><div class="tile-l">Events</div></div>
+            <div class="tile"><div class="tile-v">&lt;100ms</div><div class="tile-l">Alert latency</div></div>
+            <div class="tile"><div class="tile-v">$2.3M</div><div class="tile-l">Loss avoided</div></div>
+            <div class="tile"><div class="tile-v">99.9%</div><div class="tile-l">Uptime SLA</div></div>
+          </div>
+
+          <div class="stack">
+            <span class="chip">PyTorch</span><span class="chip">snnTorch</span><span class="chip">XGBoost</span>
+            <span class="chip">FastAPI</span><span class="chip">React</span>
+            <span class="chip">Kubernetes</span><span class="chip">Federated Learning</span>
+          </div>
+
+          <div class="proj-links">
+            <a class="link-btn" href="https://github.com/charithra754-boop/AetherSentrix" target="_blank" rel="noopener noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2A10 10 0 0 0 8.8 21.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========== PROJECT 2: NeuroFlux (signal/NLP-style embedding cloud) ========== -->
+      <article class="proj reveal" data-accent="copper">
+        <div class="proj-visual" data-viz="embedding" aria-label="Interactive 3D spike-embedding cloud with connecting filaments">
+          <span class="pv-badge">Spike embedding cloud</span>
+          <span class="pv-hint">drag to rotate · scroll to morph</span>
+          <div class="pv-grid" aria-hidden="true"></div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-num">CASE 02 / 04</p>
+          <h3>NeuroFlux</h3>
+          <p class="proj-tag">Unsupervised SNN framework for biomedical signal integrity</p>
+
+          <div class="case">
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Business problem</div>
+              <p class="case-v">
+                50/60&nbsp;Hz powerline interference corrupts ECG, EEG, and PPG traces on low-cost
+                clinical hardware. Conventional notch filters need the interference frequency
+                known in advance and <strong>distort the R-peak morphology clinicians diagnose from</strong> —
+                forcing repeat acquisitions and eroding trust in edge devices.
+              </p>
+            </div>
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Technical approach</div>
+              <p class="case-v">
+                Two mechanisms in one network. The <strong>passive path</strong> — LIF membrane filtering,
+                Poisson rate encoding, population decoding — preserves diagnostic landmarks at full
+                fidelity. <strong>Trace-based STDP</strong> then adds amplitude-domain SNR recovery in the
+                low-SNR regime (≤&nbsp;0&nbsp;dB). No labels, no reference noise channel, no prior on
+                the interference frequency. Numba-JIT hot loops, MLflow lineage, property-based tests.
+              </p>
+            </div>
+          </div>
+
+          <div class="outcomes">
+            <div class="outcomes-h"><span>Quantified outcomes</span><span>MIT-BIH validated</span></div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">ECG configs with significant gain</span><span class="o-val">100% (192/192)</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="100"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">R-peak integrity preserved (passive)</span><span class="o-val">1.000</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="100"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Energy efficiency vs. conventional DSP</span><span class="o-val">+60%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="60"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Clinical classification accuracy</span><span class="o-val">89.16%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="89"></div></div>
+            </div>
+          </div>
+
+          <div class="stat-tiles">
+            <div class="tile"><div class="tile-v">+6.5 dB</div><div class="tile-l">Mean ΔSNR</div></div>
+            <div class="tile"><div class="tile-v">8,320</div><div class="tile-l">Bench runs</div></div>
+            <div class="tile"><div class="tile-v">97%</div><div class="tile-l">Coverage</div></div>
+            <div class="tile"><div class="tile-v">2,560</div><div class="tile-l">Real-data runs</div></div>
+          </div>
+
+          <div class="stack">
+            <span class="chip">Python 3.11</span><span class="chip">PyTorch</span><span class="chip">snnTorch</span>
+            <span class="chip">Numba</span><span class="chip">MLflow</span>
+            <span class="chip">hypothesis</span><span class="chip">MIT-BIH</span>
+          </div>
+
+          <div class="proj-links">
+            <!-- No public repo yet: rendered as a non-interactive badge rather than a dead link. -->
+            <span class="link-btn is-static">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              Private research repo &mdash; available on request
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========== PROJECT 3: Astraeus (point cloud / orbital scan) ========== -->
+      <article class="proj reveal" data-accent="bronze">
+        <div class="proj-visual" data-viz="pointcloud" aria-label="Interactive 3D orbital point cloud with scanning grid">
+          <span class="pv-badge">Orbital point cloud</span>
+          <span class="pv-hint">drag to rotate · scroll to morph</span>
+          <div class="pv-grid" aria-hidden="true"></div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-num">CASE 03 / 04</p>
+          <h3>Astraeus</h3>
+          <p class="proj-tag">Orbital network digital twin · RL + GNN scheduler</p>
+
+          <div class="case">
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Business problem</div>
+              <p class="case-v">
+                Ground-station contact windows are the scarcest resource in a satellite
+                constellation. Greedy and heuristic schedulers leave downlink capacity stranded
+                whenever thousands of assets contend for the same passes — every wasted window is
+                <strong>paid-for bandwidth that never sells</strong>.
+              </p>
+            </div>
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Technical approach</div>
+              <p class="case-v">
+                Model the constellation as a dynamic graph and let a <strong>GNN encode topology</strong>
+                while a <strong>PPO agent</strong> (Stable-Baselines3) learns the scheduling policy over
+                <strong>100,000 episodes</strong>. Skyfield supplies real orbital mechanics for the twin;
+                Flask + Socket.IO streams live telemetry into a CesiumJS 3D globe so operators see
+                the policy act rather than read a log.
+              </p>
+            </div>
+          </div>
+
+          <div class="outcomes">
+            <div class="outcomes-h"><span>Quantified outcomes</span><span>vs. classical baseline</span></div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Throughput improvement</span><span class="o-val">+23.4%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="78"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Converged policy reward</span><span class="o-val">+847.3</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="88"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Telemetry round-trip latency</span><span class="o-val">sub-second</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="93"></div></div>
+            </div>
+          </div>
+
+          <div class="stat-tiles">
+            <div class="tile"><div class="tile-v">100K</div><div class="tile-l">Episodes</div></div>
+            <div class="tile"><div class="tile-v">1000s</div><div class="tile-l">Satellites</div></div>
+            <div class="tile"><div class="tile-v">SIH '25</div><div class="tile-l">Submission</div></div>
+            <div class="tile"><div class="tile-v">&lt;1s</div><div class="tile-l">Live update</div></div>
+          </div>
+
+          <div class="stack">
+            <span class="chip">PyTorch</span><span class="chip">Stable-Baselines3</span><span class="chip">PPO</span>
+            <span class="chip">GNN</span><span class="chip">Skyfield</span>
+            <span class="chip">CesiumJS</span><span class="chip">Socket.IO</span>
+          </div>
+
+          <div class="proj-links">
+            <a class="link-btn" href="https://github.com/MUKUL-PRASAD-SIGH/PROJECT_ENTANGLEMENT" target="_blank" rel="noopener noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2A10 10 0 0 0 8.8 21.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ========== PROJECT 4: KisaanMitra (agent graph) ========== -->
+      <article class="proj reveal" data-accent="gold">
+        <div class="proj-visual" data-viz="agentgraph" aria-label="Interactive 3D seven-node agent orchestration graph">
+          <span class="pv-badge">7-agent mesh</span>
+          <span class="pv-hint">drag to rotate · scroll to morph</span>
+          <div class="pv-grid" aria-hidden="true"></div>
+        </div>
+        <div class="proj-body">
+          <p class="proj-num">CASE 04 / 04</p>
+          <h3>KisaanMitra</h3>
+          <p class="proj-tag">Agricultural multi-agent recommendation platform</p>
+
+          <div class="case">
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Business problem</div>
+              <p class="case-v">
+                Smallholder farming decisions — crop choice, irrigation timing, input spend, market
+                window — each depend on a different data domain, and a single monolithic model
+                gives advice that is <strong>confidently wrong on the constraint that actually binds</strong>
+                (water budget, soil pH, or price floor).
+              </p>
+            </div>
+            <div class="case-block">
+              <div class="case-k"><b>◆</b> Technical approach</div>
+              <p class="case-v">
+                <strong>Seven specialist agents</strong> — soil, weather, crop, irrigation, pest, market,
+                and an orchestrator — communicate over RabbitMQ using the
+                <strong>Model Context Protocol</strong>, with a constraint-aware optimizer reconciling their
+                proposals before anything reaches the farmer. FastAPI microservices, TimescaleDB for
+                high-frequency sensor ingest, Dockerized across a 9-phase delivery plan.
+              </p>
+            </div>
+          </div>
+
+          <div class="outcomes">
+            <div class="outcomes-h"><span>Quantified outcomes</span><span>phase 3 of 9 shipped</span></div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">End-to-end test coverage</span><span class="o-val">80%</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="80"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Specialist agents orchestrated</span><span class="o-val">7 / 7</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="100"></div></div>
+            </div>
+            <div class="o-row">
+              <div class="o-top"><span class="o-lab">Architecture roadmap delivered</span><span class="o-val">3 / 9 phases</span></div>
+              <div class="bar-track"><div class="bar-fill" data-w="33"></div></div>
+            </div>
+          </div>
+
+          <div class="stat-tiles">
+            <div class="tile"><div class="tile-v">7</div><div class="tile-l">Agents</div></div>
+            <div class="tile"><div class="tile-v">MCP</div><div class="tile-l">Protocol</div></div>
+            <div class="tile"><div class="tile-v">80%</div><div class="tile-l">E2E tests</div></div>
+            <div class="tile"><div class="tile-v">9</div><div class="tile-l">Phases</div></div>
+          </div>
+
+          <div class="stack">
+            <span class="chip">FastAPI</span><span class="chip">RabbitMQ</span><span class="chip">MCP</span>
+            <span class="chip">TimescaleDB</span><span class="chip">TensorFlow</span>
+            <span class="chip">Docker</span><span class="chip">PostgreSQL</span>
+          </div>
+
+          <div class="proj-links">
+            <a class="link-btn" href="https://github.com/charithra754-boop/sasya" target="_blank" rel="noopener noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2A10 10 0 0 0 8.8 21.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CONTACT ============================ -->
+<section id="contact" class="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="contact-inner reveal">
+      <div style="display:flex; justify-content:center; margin-bottom:14px;">
+        <svg class="mascot" style="width:78px;height:78px" viewBox="0 0 64 64" role="img" aria-label="Flux the mascot waving hello">
+          <g class="m-body">
+            <g class="m-glow"><rect x="14" y="22" width="36" height="30" rx="11" fill="var(--copper)" opacity=".5"/></g>
+            <line class="m-antenna" x1="32" y1="22" x2="32" y2="10" stroke="var(--brass)" stroke-width="2.4" stroke-linecap="round"/>
+            <circle class="m-antenna" cx="32" cy="8" r="3.4" fill="var(--gold)"/>
+            <rect x="14" y="22" width="36" height="30" rx="11" fill="#1F1A20" stroke="var(--copper)" stroke-width="2"/>
+            <circle class="m-eye" cx="24" cy="35" r="3.6" fill="var(--copper)"/>
+            <circle class="m-eye" cx="40" cy="35" r="3.6" fill="var(--copper)"/>
+            <ellipse class="m-blush" cx="18.5" cy="41" rx="3" ry="2" fill="var(--clay)"/>
+            <ellipse class="m-blush" cx="45.5" cy="41" rx="3" ry="2" fill="var(--clay)"/>
+            <path class="m-mouth" d="M27 43q5 4 10 0" stroke="var(--brass)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M50 32q5 0 6-5" stroke="var(--copper)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <circle cx="56.4" cy="26" r="2.2" fill="var(--copper)"/>
+          </g>
+        </svg>
+      </div>
+      <p class="eyebrow" style="justify-content:center;">04 &mdash; Contact</p>
+      <h2 id="contact-title">Let's put a <span class="it">number</span> on your problem.</h2>
+      <p>
+        I'm looking for AI/ML engineering roles where the model has to survive contact with
+        real traffic. If you have a latency budget, an accuracy floor, or an energy ceiling —
+        that's the conversation I want.
+      </p>
+      <div class="socials">
+        <a class="social" data-c="copper" href="mailto:charithra754@gmail.com">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg>
+          charithra754@gmail.com
+        </a>
+        <a class="social" data-c="gold" href="https://github.com/charithra754-boop" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2A10 10 0 0 0 8.8 21.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg>
+          GitHub
+        </a>
+        <a class="social" data-c="bronze" href="https://www.linkedin.com/in/charithra-g-672a22338/" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.76-2.05 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.35c0-1.28-.02-2.92-1.78-2.92-1.79 0-2.06 1.4-2.06 2.83V21h-4V9Z"/></svg>
+          LinkedIn
+        </a>
+        <a class="social" data-c="clay" href="https://www.kaggle.com/cheryyyyyyy" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 22 9.9 15l5.4-6.9h-2.9L7.3 14V2H4.9v20h2.4v-4.4l1.4-1.7 4.1 6.1h2.7Z"/></svg>
+          Kaggle
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>&copy; <span id="year">2026</span> Charithra G &middot; Built with Three.js, vanilla JS, and zero frameworks.</span>
+    <span class="mono">Bangalore, IN &middot; <span id="fps">—</span></span>
+  </div>
+</footer>
+
+</div><!-- /.page -->
+
+<!-- ============================================================
+     THREE.JS (CDN)
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Metallic accents for the WebGL scenes. Keys match the data-accent attribute.
+const ACCENTS = {
+  copper: 0xE5A967,
+  gold:   0xD4AF37,
+  bronze: 0xB87333,
+  brass:  0xC9A227,
+  clay:   0xC97B5A
+};
+
+/* ============================================================
+   1. UI: nav, progress, reveal, counters, bars, typing
+   ============================================================ */
+
+// --- sticky nav state + mobile toggle
+const nav = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+navToggle.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', String(open));
+});
+navLinks.addEventListener('click', e => {
+  if (e.target.closest('a')) {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// --- scroll progress + nav shadow
+const progress = document.getElementById('progress');
+let scrollY = window.scrollY;
+let scrollRatio = 0;
+
+function onScroll(){
+  scrollY = window.scrollY;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  scrollRatio = max > 0 ? scrollY / max : 0;
+  progress.style.width = (scrollRatio * 100) + '%';
+  nav.classList.toggle('scrolled', scrollY > 12);
+}
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+
+// --- active nav link via IntersectionObserver
+const navAnchors = [...document.querySelectorAll('.nav-a')];
+const sectionEls = ['hero','about','skills','projects','contact'].map(id => document.getElementById(id));
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    // Contact uses the .nav-cta pill (already visually distinct), so when it is
+    // the active section every .nav-a simply clears instead of going stale.
+    navAnchors.forEach(a =>
+      a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin:'-45% 0px -50% 0px' });
+sectionEls.forEach(s => s && navObs.observe(s));
+
+// --- reveal on scroll
+const revealObs = new IntersectionObserver((entries, obs) => {
+  entries.forEach(en => {
+    if (en.isIntersecting){ en.target.classList.add('in'); obs.unobserve(en.target); }
+  });
+}, { threshold:0.14, rootMargin:'0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// --- animated counters
+function animateCount(el){
+  const target = parseFloat(el.dataset.count);
+  const dec    = parseInt(el.dataset.dec || '0', 10);
+  const pre    = el.dataset.prefix || '';
+  const suf    = el.dataset.suffix || '';
+  const dur    = 1500;
+  if (REDUCED){ el.textContent = pre + target.toFixed(dec) + suf; return; }
+  const t0 = performance.now();
+  (function step(now){
+    const p = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = target * eased;
+    el.textContent = pre + (dec ? val.toFixed(dec) : Math.round(val).toLocaleString()) + suf;
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+}
+const countObs = new IntersectionObserver((entries, obs) => {
+  entries.forEach(en => {
+    if (en.isIntersecting){ animateCount(en.target); obs.unobserve(en.target); }
+  });
+}, { threshold:0.5 });
+document.querySelectorAll('[data-count]').forEach(el => countObs.observe(el));
+
+// Counters/bars inside the hero must not wait on a scroll event: on short
+// viewports the metric strip can sit just below the fold and would never fire.
+requestAnimationFrame(() => {
+  document.querySelectorAll('#hero [data-count]').forEach(el => {
+    animateCount(el); countObs.unobserve(el);
+  });
+});
+
+// --- glowing stat bars fill when scrolled into view
+const barObs = new IntersectionObserver((entries, obs) => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.style.width = en.target.dataset.w + '%';
+    obs.unobserve(en.target);
+  });
+}, { threshold:0.4 });
+document.querySelectorAll('.bar-fill').forEach(el => barObs.observe(el));
+
+// --- hero role typewriter
+const ROLES = [
+  'AI/ML Engineer',
+  'Multi-Agent Systems Architect',
+  'Neuromorphic Computing Researcher',
+  'Production ML Engineer'
+];
+const typedEl = document.getElementById('typed');
+if (REDUCED){
+  typedEl.textContent = ROLES[0];
+} else {
+  let ri = 0, ci = 0, deleting = false;
+  (function type(){
+    const word = ROLES[ri];
+    ci += deleting ? -1 : 1;
+    typedEl.textContent = word.slice(0, ci);
+    let delay = deleting ? 34 : 62;
+    if (!deleting && ci === word.length){ deleting = true; delay = 1900; }
+    else if (deleting && ci === 0){ deleting = false; ri = (ri + 1) % ROLES.length; delay = 340; }
+    setTimeout(type, delay);
+  })();
+}
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ============================================================
+   3. COFFEE SPILL — ice physics in the hero, flood in contact
+   ============================================================
+   Reaching the Contact section knocks the cup out of her hand. Two things
+   then run independently:
+     (a) ice cubes tumble/roll/settle across the hero on a 2D canvas, with
+         gravity, restitution, rolling friction and angular momentum;
+     (b) dark coffee floods the contact panel, rising and sloshing.
+------------------------------------------------------------------------- */
+(function initCoffeeSpill(){
+  const sitter = document.getElementById('heroSitter');
+  const iceCv  = document.getElementById('iceCanvas');
+  const contact = document.getElementById('contact');
+  const brewRect = document.getElementById('brewRect');
+  if (!sitter || !iceCv || !contact) return;
+
+  // 2D contexts. Both canvases stay at a 1x1 buffer until the spill actually
+  // fires, so they cost no memory during the common case (never scrolled there).
+  const ictx = iceCv.getContext('2d');
+  iceCv.width = iceCv.height = 1;
+  let spilled = false, iceRunning = false;
+  let iw=0, ih=0;
+
+  function sizeCanvas(cv, ctx){
+    const r = cv.getBoundingClientRect();
+    const d = Math.min(window.devicePixelRatio||1, 2);
+    const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+    cv.width = Math.round(w*d); cv.height = Math.round(h*d);
+    ctx.setTransform(d,0,0,d,0,0);
+    return [w,h];
+  }
+
+  /* ---------------- (a) Ice cubes ---------------- */
+  const cubes = [];
+  function spawnIce(){
+    // origin: the cup's position in hero-space, taken from the live layout
+    const hero = document.getElementById('hero').getBoundingClientRect();
+    const cup  = document.getElementById('heroCup').getBoundingClientRect();
+    const ox = cup.left - hero.left + cup.width*0.4;
+    const oy = cup.top  - hero.top  + cup.height*0.45;
+    const N = REDUCED ? 3 : 7;
+    for (let i=0;i<N;i++){
+      const sz = 11 + Math.random()*8;
+      cubes.push({
+        x: ox + (Math.random()-0.5)*14,
+        y: oy + (Math.random()-0.5)*10,
+        // thrown leftward and slightly up, as if flung from the tipping cup
+        vx: -(52 + Math.random()*118),
+        vy: -(34 + Math.random()*66),
+        w: sz, h: sz*(0.86 + Math.random()*0.28),
+        a: Math.random()*Math.PI,          // angle
+        va: (Math.random()-0.5)*9,         // angular velocity
+        rest: 0.30 + Math.random()*0.22,   // restitution
+        settled:false, melt:1
+      });
+    }
+  }
+
+  function drawCube(c){
+    ictx.save();
+    ictx.translate(c.x, c.y);
+    ictx.rotate(c.a);
+    const w=c.w, h=c.h, r=Math.min(w,h)*0.26;
+    // frosted body
+    const g = ictx.createLinearGradient(-w/2,-h/2,w/2,h/2);
+    g.addColorStop(0,   `rgba(234,246,251,${0.90*c.melt})`);
+    g.addColorStop(0.5, `rgba(200,228,240,${0.66*c.melt})`);
+    g.addColorStop(1,   `rgba(168,206,224,${0.52*c.melt})`);
+    ictx.beginPath();
+    if (ictx.roundRect) ictx.roundRect(-w/2,-h/2,w,h,r);
+    else ictx.rect(-w/2,-h/2,w,h);
+    ictx.fillStyle = g; ictx.fill();
+    ictx.strokeStyle = `rgba(255,255,255,${0.5*c.melt})`;
+    ictx.lineWidth = 1; ictx.stroke();
+    // internal facet + specular highlight sell the "ice" read
+    ictx.beginPath();
+    ictx.moveTo(-w*0.22,-h*0.3); ictx.lineTo(w*0.14, h*0.1); ictx.lineTo(-w*0.06, h*0.32);
+    ictx.strokeStyle = `rgba(255,255,255,${0.30*c.melt})`; ictx.stroke();
+    ictx.beginPath();
+    ictx.ellipse(-w*0.2,-h*0.24, w*0.15, h*0.09, -0.5, 0, 6.283);
+    ictx.fillStyle = `rgba(255,255,255,${0.62*c.melt})`; ictx.fill();
+    ictx.restore();
+  }
+
+  let iceLast = 0;
+  function iceFrame(now){
+    if (!iceRunning) return;
+    const dt = Math.min(0.032, (now - iceLast)/1000 || 0.016);
+    iceLast = now;
+    ictx.clearRect(0,0,iw,ih);
+
+    const floor = ih - 6;
+    let alive = false;
+    for (const c of cubes){
+      if (!c.settled){
+        c.vy += 1420 * dt;               // gravity
+        c.x  += c.vx * dt;
+        c.y  += c.vy * dt;
+        c.a  += c.va * dt;
+
+        const half = Math.max(c.w,c.h)/2;
+        // floor collision -> bounce, convert horizontal motion into spin
+        if (c.y + half > floor){
+          c.y = floor - half;
+          if (Math.abs(c.vy) > 26){
+            c.vy = -c.vy * c.rest;
+            c.va = c.va*0.55 + (c.vx/half)*0.5;   // impact torque
+            c.vx *= 0.9;
+          } else {
+            // rolling: friction bleeds speed, spin tracks travel
+            c.vy = 0;
+            c.vx *= 0.965;
+            c.va  = c.vx / half;
+            if (Math.abs(c.vx) < 5){
+              c.vx = 0; c.va *= 0.86;
+              if (Math.abs(c.va) < 0.12){ c.va = 0; c.settled = true; }
+            }
+          }
+        }
+        // side walls
+        const hw = Math.max(c.w,c.h)/2;
+        if (c.x - hw < 0){ c.x = hw; c.vx = -c.vx*0.42; c.va *= -0.5; }
+        if (c.x + hw > iw){ c.x = iw-hw; c.vx = -c.vx*0.42; c.va *= -0.5; }
+        alive = true;
+      } else {
+        // slow melt once at rest
+        c.melt = Math.max(0, c.melt - dt*0.035);
+        if (c.melt > 0) alive = true;
+      }
+      if (c.melt > 0) drawCube(c);
+    }
+    if (alive) requestAnimationFrame(iceFrame);
+    else iceRunning = false;
+  }
+
+  /* ---------------- trigger ---------------- */
+  function doSpill(){
+    if (spilled) return;
+    spilled = true;
+    sitter.classList.add('spilled');
+    // drain the glass
+    if (brewRect){ brewRect.setAttribute('y','70'); brewRect.setAttribute('height','2'); }
+
+    [iw,ih] = sizeCanvas(iceCv, ictx);
+    spawnIce();
+    if (!iceRunning){ iceRunning = true; iceLast = performance.now(); requestAnimationFrame(iceFrame); }
+  }
+  function unSpill(){
+    // scrolling back up rights the cup so the gag can replay
+    if (!spilled) return;
+    spilled = false;
+    sitter.classList.remove('spilled');
+    if (brewRect){ brewRect.setAttribute('y','46'); brewRect.setAttribute('height','26'); }
+    cubes.length = 0;
+    ictx.clearRect(0,0,iw,ih);
+  }
+
+  new IntersectionObserver(entries => {
+    entries.forEach(en => en.isIntersecting ? doSpill() : unSpill());
+  }, { threshold:0.3 }).observe(contact);
+
+  window.addEventListener('resize', () => {
+    if (spilled){ [iw,ih]=sizeCanvas(iceCv,ictx); }
+  }, { passive:true });
+})();
+
+/* ============================================================
+   2. THREE.JS SCENES
+   ============================================================ */
+if (typeof THREE === 'undefined'){
+  console.warn('Three.js failed to load — the page remains fully functional without WebGL.');
+  return;
+}
+
+// shared pointer state (normalized -1..1)
+const pointer = { x:0, y:0, tx:0, ty:0 };
+window.addEventListener('pointermove', e => {
+  pointer.tx = (e.clientX / window.innerWidth)  * 2 - 1;
+  pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
+}, { passive:true });
+
+const DPR = () => Math.min(window.devicePixelRatio || 1, 2);
+
+/* ---------- 2a. Neuron field background ----------------------------------
+   Biological neurons (soft round somas + organic curved dendrites) that
+   progressively rectify into a digital neural network (square nodes + straight
+   orthogonal traces) as the page is scrolled. Signals travel the connections
+   the whole time. `morph` (0 = organic, 1 = digital) drives the transition.
+------------------------------------------------------------------------- */
+let bgRenderer, bgScene, bgCamera, bgPoints, bgLines, bgNeurons;
+
+/* Soma sprite: radial-gradient blob (organic) — drawn once to a canvas texture
+   so the cells read as glowing cell bodies rather than hard square quads. */
+function makeSomaTexture(digital){
+  const S = 64, c = document.createElement('canvas');
+  c.width = c.height = S;
+  const x = c.getContext('2d');
+  if (digital){
+    // crisp square node with a bright core + thin border = "digital unit"
+    x.fillStyle = 'rgba(255,255,255,0.14)';
+    x.fillRect(S*0.22, S*0.22, S*0.56, S*0.56);
+    x.strokeStyle = 'rgba(255,255,255,0.95)';
+    x.lineWidth = 3;
+    x.strokeRect(S*0.22, S*0.22, S*0.56, S*0.56);
+    x.fillStyle = 'rgba(255,255,255,1)';
+    x.fillRect(S*0.42, S*0.42, S*0.16, S*0.16);
+  } else {
+    // Soft cell body with a distinct nucleus — modelled on a real neuron soma:
+    // translucent cytoplasm halo, brighter membrane, dense off-centre nucleus.
+    const halo = x.createRadialGradient(S/2, S/2, 0, S/2, S/2, S/2);
+    halo.addColorStop(0,    'rgba(255,255,255,0.62)');
+    halo.addColorStop(0.42, 'rgba(255,255,255,0.30)');
+    halo.addColorStop(0.72, 'rgba(255,255,255,0.10)');
+    halo.addColorStop(1,    'rgba(255,255,255,0)');
+    x.fillStyle = halo;
+    x.beginPath(); x.arc(S/2, S/2, S/2, 0, 6.283); x.fill();
+    // membrane rim
+    x.strokeStyle = 'rgba(255,255,255,0.5)';
+    x.lineWidth = 1.6;
+    x.beginPath(); x.arc(S/2, S/2, S*0.3, 0, 6.283); x.stroke();
+    // nucleus
+    const nuc = x.createRadialGradient(S*0.46, S*0.44, 0, S*0.46, S*0.44, S*0.17);
+    nuc.addColorStop(0, 'rgba(255,255,255,1)');
+    nuc.addColorStop(0.55, 'rgba(255,255,255,0.8)');
+    nuc.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = nuc;
+    x.beginPath(); x.arc(S*0.46, S*0.44, S*0.17, 0, 6.283); x.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.needsUpdate = true;
+  return t;
+}
+
+(function initBackground(){
+  const canvas = document.getElementById('bg-canvas');
+  try {
+    bgRenderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' });
+  } catch(err){ console.warn('WebGL unavailable', err); return; }
+
+  // The neuron field is soft and additive, so it holds up at reduced
+  // resolution. Capping DPR here is the largest fill-rate saving on retina
+  // displays (a 2x canvas costs 4x the pixels).
+  bgRenderer.setPixelRatio(Math.min(DPR(), 1.5));
+  bgRenderer.setSize(window.innerWidth, window.innerHeight, false);
+
+  bgScene  = new THREE.Scene();
+  bgCamera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 400);
+  bgCamera.position.z = 46;
+
+  const MOBILE = window.innerWidth < 700;
+  // ---- CUSTOMIZE: how many neurons, and how far the field spreads
+  const NEURONS = MOBILE ? 58 : 130;
+  const SPREAD  = 128, DEPTH = 70;
+  // ---- CUSTOMIZE: dendrites per neuron and their reach
+  const DENDRITES = 4, LINK_DIST = 26;
+
+  const C_ORG = new THREE.Color(ACCENTS.copper);   // organic: warm copper
+  const C_DIG = new THREE.Color(ACCENTS.brass);    // digital: cool brass/gold
+
+  /* ---- 1. Neuron cell bodies ---- */
+  const somaOrg = new Float32Array(NEURONS*3);   // organic scatter
+  const somaDig = new Float32Array(NEURONS*3);   // digital lattice target
+  const somaSeed = [];
+  const GRID = Math.ceil(Math.sqrt(NEURONS));
+  for (let i=0;i<NEURONS;i++){
+    const x = (Math.random()-0.5)*SPREAD,
+          y = (Math.random()-0.5)*SPREAD,
+          z = (Math.random()-0.5)*DEPTH;
+    somaOrg[i*3]=x; somaOrg[i*3+1]=y; somaOrg[i*3+2]=z;
+    // snap to a regular grid for the digital state
+    const gx = i % GRID, gy = Math.floor(i / GRID);
+    somaDig[i*3]   = (gx/(GRID-1) - 0.5) * SPREAD * 0.94;
+    somaDig[i*3+1] = (gy/(GRID-1) - 0.5) * SPREAD * 0.94;
+    somaDig[i*3+2] = Math.round(z / 22) * 22;   // quantised depth planes
+    somaSeed.push({ ph: Math.random()*6.283, sp: 0.5 + Math.random()*0.9 });
+  }
+
+  const somaPos = new Float32Array(somaOrg);      // live, interpolated
+  const somaGeo = new THREE.BufferGeometry();
+  somaGeo.setAttribute('position', new THREE.BufferAttribute(somaPos,3));
+
+  const texOrg = makeSomaTexture(false), texDig = makeSomaTexture(true);
+  // two overlaid point clouds cross-fade organic → digital
+  const somaMatOrg = new THREE.PointsMaterial({
+    size:3.4, map:texOrg, color:C_ORG, transparent:true, opacity:0.9,
+    depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true
+  });
+  const somaMatDig = new THREE.PointsMaterial({
+    size:2.6, map:texDig, color:C_DIG, transparent:true, opacity:0,
+    depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true
+  });
+  const somaOrgPts = new THREE.Points(somaGeo, somaMatOrg);
+  const somaDigPts = new THREE.Points(somaGeo, somaMatDig);
+  bgPoints = new THREE.Group();
+  bgPoints.add(somaOrgPts, somaDigPts);
+  bgScene.add(bgPoints);
+
+  /* ---- 2. Dendrites: curved when organic, right-angled when digital ----
+     Each connection is sampled into SEG segments so it can bend.            */
+  const SEG = 12;   // multiple of 3 so the digital x→y→z legs land on corners
+  const conns = [];
+  for (let i=0;i<NEURONS;i++){
+    // connect to nearest few neighbours => an actual network, not random noise
+    const d = [];
+    for (let j=0;j<NEURONS;j++){
+      if (i===j) continue;
+      const dx=somaOrg[i*3]-somaOrg[j*3], dy=somaOrg[i*3+1]-somaOrg[j*3+1], dz=somaOrg[i*3+2]-somaOrg[j*3+2];
+      const dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
+      if (dist < LINK_DIST) d.push({ j, dist });
+    }
+    d.sort((a,b)=>a.dist-b.dist);
+    d.slice(0, DENDRITES).forEach(n => {
+      if (i < n.j) conns.push({ a:i, b:n.j, bow:(Math.random()-0.5)*14, ph:Math.random()*6.283 });
+    });
+  }
+
+  const linePos = new Float32Array(conns.length * SEG * 2 * 3);
+  const lineCol = new Float32Array(conns.length * SEG * 2 * 3);
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos,3));
+  lineGeo.setAttribute('color',    new THREE.BufferAttribute(lineCol,3));
+  bgLines = new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({
+    vertexColors:true, transparent:true, opacity:0.5,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  bgScene.add(bgLines);
+
+  /* ---- 3. Action potentials: bright pulses running along the dendrites ---- */
+  const PULSES = MOBILE ? 42 : 110;
+  const pulsePos = new Float32Array(PULSES*3);
+  const pulseGeo = new THREE.BufferGeometry();
+  pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulsePos,3));
+  const pulseMat = new THREE.PointsMaterial({
+    size:2.5, map:makeSomaTexture(false), color:0xFFF1D6, transparent:true,
+    opacity:0.95, depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true
+  });
+  const pulses = new THREE.Points(pulseGeo, pulseMat);
+  bgScene.add(pulses);
+  const pulseState = [];
+  for (let i=0;i<PULSES;i++){
+    pulseState.push({
+      c: conns.length ? Math.floor(Math.random()*conns.length) : 0,
+      t: Math.random(),
+      sp: 0.09 + Math.random()*0.16
+    });
+  }
+
+  /* ---- 4. Synapses: small glowing boutons studded along each dendrite,
+     the bright orange beads visible in real neuron micrographs. ---- */
+  const synPer = 2;
+  const SYN = conns.length * synPer;
+  const synPos = new Float32Array(SYN*3);
+  const synGeo = new THREE.BufferGeometry();
+  synGeo.setAttribute('position', new THREE.BufferAttribute(synPos,3));
+  const synMat = new THREE.PointsMaterial({
+    size:1.15, map:makeSomaTexture(false), color:0xFFA24B, transparent:true,
+    opacity:0.75, depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true
+  });
+  const synapses = new THREE.Points(synGeo, synMat);
+  bgScene.add(synapses);
+  const synK = [];
+  for (let i=0;i<conns.length;i++)
+    for (let s=0;s<synPer;s++)
+      synK.push({ c:i, k:0.24 + (s+Math.random()*0.5)/(synPer+0.6), ph:Math.random()*6.283 });
+
+  /* ---- point along a connection, blending organic bow → digital right-angle ---- */
+  const _v = new THREE.Vector3();
+  function connPoint(cn, k, morph, out){
+    const ai=cn.a*3, bi=cn.b*3;
+    const ax=somaPos[ai], ay=somaPos[ai+1], az=somaPos[ai+2];
+    const bx=somaPos[bi], by=somaPos[bi+1], bz=somaPos[bi+2];
+    // organic: quadratic bow perpendicular-ish to the segment
+    const bow = Math.sin(k*Math.PI) * cn.bow * (1-morph);
+    const ox = ax + (bx-ax)*k + bow*0.35;
+    const oy = ay + (by-ay)*k + bow;
+    const oz = az + (bz-az)*k;
+    /* digital: 3-leg Manhattan route (x → y → z), so every trace is strictly
+       axis-aligned like a PCB and no long diagonals cross the field. */
+    const k3 = k*3;
+    let dx, dy, dz;
+    if (k3 < 1){                       // leg 1: travel in X
+      dx = ax + (bx-ax)*k3;  dy = ay;  dz = az;
+    } else if (k3 < 2){                // leg 2: travel in Y
+      dx = bx;  dy = ay + (by-ay)*(k3-1);  dz = az;
+    } else {                           // leg 3: travel in Z
+      dx = bx;  dy = by;  dz = az + (bz-az)*(k3-2);
+    }
+    out.set(ox + (dx-ox)*morph, oy + (dy-oy)*morph, oz + (dz-oz)*morph);
+    return out;
+  }
+
+  // expose for the render loop
+  bgNeurons = {
+    NEURONS, SEG, conns, somaOrg, somaDig, somaPos, somaSeed, somaGeo,
+    somaMatOrg, somaMatDig, lineGeo, linePos, lineCol,
+    pulseGeo, pulsePos, pulseState, pulseMat,
+    synGeo, synPos, synK, synMat,
+    synapses, pulses,
+    C_ORG, C_DIG, connPoint, _v, morph:0
+  };
+
+  canvas.classList.add('ready');
+})();
+
+/* ---------- 2b. Visualizer factory ----------
+   Each builder returns { group, update(t, dt, ctx) }.
+   ctx = { progress (0..1 through viewport), hover (0..1), pointer, dragX, dragY }
+------------------------------------------------------------------- */
+const VIZ = {};
+
+/* HERO — morphing icosahedron core + orbiting shell */
+VIZ.hero = function(accent){
+  const g = new THREE.Group();
+
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.35, 5),
+    new THREE.MeshBasicMaterial({ color:0x5B8CF7, wireframe:true, transparent:true, opacity:0.26 })
+  );
+  g.add(core);
+
+  const inner = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.9, 1),
+    new THREE.MeshBasicMaterial({ color:0xE85FA8, wireframe:true, transparent:true, opacity:0.2 })
+  );
+  g.add(inner);
+
+  // orbiting particle shell
+  const N = 1400;
+  const pos = new Float32Array(N*3);
+  const base = new Float32Array(N*3);
+  for (let i=0;i<N;i++){
+    const u = Math.random(), v = Math.random();
+    const th = 2*Math.PI*u, ph = Math.acos(2*v - 1);
+    const r = 2.1 + Math.random()*0.5;
+    const x = r*Math.sin(ph)*Math.cos(th), y = r*Math.sin(ph)*Math.sin(th), z = r*Math.cos(ph);
+    base[i*3]=x; base[i*3+1]=y; base[i*3+2]=z;
+    pos[i*3]=x;  pos[i*3+1]=y;  pos[i*3+2]=z;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+
+  /* ---- Iridescent shell palette --------------------------------------------
+     Not a flat single hue: each particle is tinted by its position along the
+     shell, sweeping teal → violet → magenta → amber. The whole ramp then
+     rotates over time (see update), giving an oil-slick / dichroic shimmer that
+     stays legible on a dark background.
+     ---- CUSTOMIZE: swap these stops to retune the orb's colour story.       */
+  const SHELL_RAMP = ['#2FD4C4', '#5B8CF7', '#A46BF5', '#E85FA8', '#F2A65A'];
+  const rampCols = SHELL_RAMP.map(h => new THREE.Color(h));
+  function sampleRamp(u){                    // u in 0..1, wraps around
+    const x = ((u % 1) + 1) % 1;
+    const f = x * rampCols.length;
+    const i = Math.floor(f) % rampCols.length;
+    const j = (i + 1) % rampCols.length;
+    return rampCols[i].clone().lerp(rampCols[j], f - Math.floor(f));
+  }
+
+  const shellCol = new Float32Array(N*3);
+  const shellU   = new Float32Array(N);      // each particle's ramp coordinate
+  for (let i=0;i<N;i++){
+    // latitude+longitude mix so the gradient wraps the sphere rather than banding
+    const y = base[i*3+1], x = base[i*3], z = base[i*3+2];
+    shellU[i] = (Math.atan2(z, x) / (Math.PI*2) + 0.5) * 0.65 + (y/2.6 + 0.5) * 0.35;
+    const c = sampleRamp(shellU[i]);
+    shellCol[i*3]=c.r; shellCol[i*3+1]=c.g; shellCol[i*3+2]=c.b;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(shellCol,3));
+
+  const shell = new THREE.Points(geo, new THREE.PointsMaterial({
+    size:0.075, map:makeSomaTexture(false), vertexColors:true, transparent:true,
+    opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  g.add(shell);
+
+  // save original vertex positions for morphing
+  const coreGeo = core.geometry;
+  const cBase = Float32Array.from(coreGeo.attributes.position.array);
+
+  return { group:g, update(t, dt, ctx){
+    const boost = 1 + ctx.hover * 0.5;
+    g.rotation.y += dt * 0.16 * boost + ctx.dragX * 0.0016;
+    g.rotation.x += dt * 0.07 + ctx.dragY * 0.0016;
+    inner.rotation.y -= dt * 0.4;
+
+    // breathing morph on the core — amplitude rises with hover
+    const arr = coreGeo.attributes.position.array;
+    const amp = 0.10 + ctx.hover * 0.16;
+    for (let i=0;i<arr.length;i+=3){
+      const x=cBase[i], y=cBase[i+1], z=cBase[i+2];
+      const n = Math.sin(x*2.2 + t*1.3) * Math.cos(y*2.0 - t) * Math.sin(z*2.4 + t*0.7);
+      const s = 1 + n * amp;
+      arr[i]=x*s; arr[i+1]=y*s; arr[i+2]=z*s;
+    }
+    coreGeo.attributes.position.needsUpdate = true;
+
+    // shell swirl
+    const sp = geo.attributes.position.array;
+    for (let i=0;i<sp.length;i+=3){
+      const bx=base[i], by=base[i+1], bz=base[i+2];
+      const w = Math.sin(t*0.8 + bx*1.1 + by*0.7) * (0.09 + ctx.hover*0.12);
+      sp[i]=bx*(1+w); sp[i+1]=by*(1+w); sp[i+2]=bz*(1+w);
+    }
+    geo.attributes.position.needsUpdate = true;
+    shell.material.opacity = 0.62 + ctx.hover*0.35;
+
+    /* rotate the iridescent ramp so the colour story keeps shifting;
+       hover accelerates the sweep and saturates it slightly */
+    const drift = t * 0.055 + ctx.hover * 0.22;
+    const sc = geo.attributes.color.array;
+    for (let i=0;i<N;i++){
+      const c = sampleRamp(shellU[i] + drift);
+      sc[i*3]=c.r; sc[i*3+1]=c.g; sc[i*3+2]=c.b;
+    }
+    geo.attributes.color.needsUpdate = true;
+
+    // wireframe layers cross-fade through the same ramp, offset for contrast
+    const cc = sampleRamp(drift * 1.6);
+    core.material.color.copy(cc);
+    inner.material.color.copy(sampleRamp(drift * 1.6 + 0.42));
+  }};
+};
+
+/* NLP / LLM — glowing embedding cloud + filament graph */
+VIZ.embedding = function(accent){
+  const g = new THREE.Group();
+
+  // ---- CUSTOMIZE: NODES = cloud density, LINK_R = filament reach
+  const NODES = 260, LINK_R = 1.15;
+  const nodes = [];
+  for (let i=0;i<NODES;i++){
+    // three loose gaussian clusters => visually "semantic neighborhoods"
+    const cluster = i % 3;
+    const cx = [-1.1, 1.2, 0.1][cluster];
+    const cy = [0.6, -0.4, 1.3][cluster];
+    const cz = [0.2, 0.9, -1.1][cluster];
+    const gauss = () => (Math.random()+Math.random()+Math.random()-1.5) * 0.9;
+    nodes.push(new THREE.Vector3(cx+gauss(), cy+gauss(), cz+gauss()));
+  }
+
+  const npos = new Float32Array(NODES*3);
+  nodes.forEach((v,i)=>{ npos[i*3]=v.x; npos[i*3+1]=v.y; npos[i*3+2]=v.z; });
+  const nGeo = new THREE.BufferGeometry();
+  nGeo.setAttribute('position', new THREE.BufferAttribute(npos,3));
+  const points = new THREE.Points(nGeo, new THREE.PointsMaterial({
+    color:accent, size:0.085, transparent:true, opacity:0.95,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  g.add(points);
+
+  // filaments between near neighbours
+  const segs = [];
+  for (let i=0;i<NODES;i++){
+    for (let j=i+1;j<NODES;j++){
+      if (nodes[i].distanceTo(nodes[j]) < LINK_R){
+        segs.push(i, j);
+        if (segs.length > 1600) break;
+      }
+    }
+    if (segs.length > 1600) break;
+  }
+  const lpos = new Float32Array(segs.length*3);
+  const lGeo = new THREE.BufferGeometry();
+  lGeo.setAttribute('position', new THREE.BufferAttribute(lpos,3));
+  const lines = new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({
+    color:accent, transparent:true, opacity:0.16, blending:THREE.AdditiveBlending
+  }));
+  g.add(lines);
+
+  const base = nodes.map(v=>v.clone());
+
+  return { group:g, update(t, dt, ctx){
+    g.rotation.y += dt*0.2 + ctx.dragX*0.002;
+    g.rotation.x = Math.sin(t*0.2)*0.16 + ctx.dragY*0.002 + (ctx.progress-0.5)*0.5;
+
+    // nodes drift + expand with scroll progress (embedding "spreading out")
+    const expand = 1 + ctx.progress*0.35 + ctx.hover*0.2;
+    for (let i=0;i<NODES;i++){
+      const b = base[i];
+      const j = Math.sin(t*1.1 + i*0.7)*0.05;
+      const v = nodes[i];
+      v.set((b.x+j)*expand, (b.y+j*0.7)*expand, (b.z-j)*expand);
+      npos[i*3]=v.x; npos[i*3+1]=v.y; npos[i*3+2]=v.z;
+    }
+    nGeo.attributes.position.needsUpdate = true;
+
+    for (let s=0;s<segs.length;s++){
+      const v = nodes[segs[s]];
+      lpos[s*3]=v.x; lpos[s*3+1]=v.y; lpos[s*3+2]=v.z;
+    }
+    lGeo.attributes.position.needsUpdate = true;
+
+    points.material.size = 0.085 + ctx.hover*0.05;
+    lines.material.opacity = 0.10 + ctx.hover*0.35;
+  }};
+};
+
+/* COMPUTER VISION / ORBITAL — point cloud + scanning grid plane */
+VIZ.pointcloud = function(accent){
+  const g = new THREE.Group();
+
+  // ---- CUSTOMIZE: N = cloud resolution; shape function below defines the form
+  const N = 3000;
+  const pos = new Float32Array(N*3);
+  const base = new Float32Array(N*3);
+  for (let i=0;i<N;i++){
+    // torus-knot-ish shell => reads as an orbital swarm
+    const a = Math.random()*Math.PI*2;
+    const b = Math.random()*Math.PI*2;
+    const R = 1.6, r = 0.55 + Math.random()*0.18;
+    const x = (R + r*Math.cos(b)) * Math.cos(a);
+    const y = (R + r*Math.cos(b)) * Math.sin(a);
+    const z = r*Math.sin(b) * 1.6;
+    base[i*3]=x; base[i*3+1]=y; base[i*3+2]=z;
+    pos[i*3]=x;  pos[i*3+1]=y;  pos[i*3+2]=z;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  const cloud = new THREE.Points(geo, new THREE.PointsMaterial({
+    color:accent, size:0.05, transparent:true, opacity:0.9,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  g.add(cloud);
+
+  // bounding wire box
+  const box = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(4.4,4.4,2.6)),
+    new THREE.LineBasicMaterial({ color:accent, transparent:true, opacity:0.18 })
+  );
+  g.add(box);
+
+  // scanning grid plane that sweeps vertically
+  const scan = new THREE.LineSegments(
+    new THREE.WireframeGeometry(new THREE.PlaneGeometry(4.4,4.4,10,10)),
+    new THREE.LineBasicMaterial({ color:0xF2EBE3, transparent:true, opacity:0.22 })
+  );
+  scan.rotation.x = Math.PI/2;
+  g.add(scan);
+
+  return { group:g, update(t, dt, ctx){
+    g.rotation.y += dt*0.18 + ctx.dragX*0.002;
+    g.rotation.x = -0.35 + Math.sin(t*0.25)*0.1 + ctx.dragY*0.002;
+
+    // sweep the scan plane; speeds up on hover
+    const speed = 0.35 + ctx.hover*0.9;
+    scan.position.y = Math.sin(t*speed) * 1.3;
+    scan.material.opacity = 0.12 + ctx.hover*0.3;
+    scan.material.color.set(ctx.hover > 0.4 ? accent : 0xF2EBE3);
+
+    // points pulse outward with scroll progress
+    const p = geo.attributes.position.array;
+    const swell = 1 + Math.sin(t*0.7)*0.03 + ctx.progress*0.18;
+    for (let i=0;i<p.length;i+=3){
+      const y = base[i+1];
+      // scan-line highlight: points near the plane get pushed slightly
+      const d = Math.abs(y - scan.position.y);
+      const kick = d < 0.25 ? (0.25-d)*0.6*(1+ctx.hover) : 0;
+      p[i]   = base[i]   * (swell + kick);
+      p[i+1] = base[i+1] * swell;
+      p[i+2] = base[i+2] * (swell + kick);
+    }
+    geo.attributes.position.needsUpdate = true;
+    cloud.material.size = 0.05 + ctx.hover*0.03;
+  }};
+};
+
+/* FRAUD / TIME-SERIES — wobbling topological heatmap surface */
+VIZ.heatmap = function(accent){
+  const g = new THREE.Group();
+
+  // ---- CUSTOMIZE: SEG = mesh resolution (cost scales with SEG^2)
+  const SEG = 46, SIZE = 4.2;
+  const geo = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
+  const base = Float32Array.from(geo.attributes.position.array);
+
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color:accent, wireframe:true, transparent:true, opacity:0.5
+  }));
+  mesh.rotation.x = -Math.PI/2.6;
+  g.add(mesh);
+
+  // anomaly spikes — glowing markers riding the surface
+  const SPIKES = 7;
+  const spGeo = new THREE.BufferGeometry();
+  const spPos = new Float32Array(SPIKES*3);
+  const spSeed = [];
+  for (let i=0;i<SPIKES;i++){
+    spSeed.push({ x:(Math.random()-0.5)*SIZE*0.8, z:(Math.random()-0.5)*SIZE*0.8, ph:Math.random()*6.28 });
+  }
+  spGeo.setAttribute('position', new THREE.BufferAttribute(spPos,3));
+  const spikes = new THREE.Points(spGeo, new THREE.PointsMaterial({
+    color:ACCENTS.gold, size:0.2, transparent:true, opacity:0.95,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  spikes.rotation.copy(mesh.rotation);
+  g.add(spikes);
+
+  // parametric wireframe sphere behind the surface
+  const sphere = new THREE.LineSegments(
+    new THREE.WireframeGeometry(new THREE.SphereGeometry(1.05, 14, 10)),
+    new THREE.LineBasicMaterial({ color:accent, transparent:true, opacity:0.14 })
+  );
+  sphere.position.y = 1.4;
+  g.add(sphere);
+
+  function height(x, z, t, amp){
+    return (
+      Math.sin(x*1.5 + t*1.1) * 0.32 +
+      Math.cos(z*1.3 - t*0.8) * 0.28 +
+      Math.sin((x+z)*0.9 + t*1.6) * 0.16
+    ) * amp;
+  }
+
+  return { group:g, update(t, dt, ctx){
+    g.rotation.y += dt*0.1 + ctx.dragX*0.002;
+    g.rotation.x = ctx.dragY*0.0016 + (ctx.progress-0.5)*0.3;
+
+    // amplitude spikes on hover => "fraud burst"
+    const amp = 0.8 + ctx.hover*1.4 + ctx.progress*0.3;
+    const arr = geo.attributes.position.array;
+    for (let i=0;i<arr.length;i+=3){
+      const x = base[i], y = base[i+1];
+      arr[i+2] = height(x, y, t, amp);
+    }
+    geo.attributes.position.needsUpdate = true;
+    mesh.material.opacity = 0.35 + ctx.hover*0.35;
+
+    for (let i=0;i<SPIKES;i++){
+      const s = spSeed[i];
+      const bob = Math.sin(t*1.4 + s.ph);
+      spPos[i*3]   = s.x;
+      spPos[i*3+1] = s.z;
+      spPos[i*3+2] = height(s.x, s.z, t, amp) + 0.18 + bob*0.08;
+    }
+    spGeo.attributes.position.needsUpdate = true;
+    spikes.material.size = 0.16 + Math.abs(Math.sin(t*2))*0.05 + ctx.hover*0.12;
+
+    sphere.rotation.y += dt*0.5;
+    sphere.rotation.x += dt*0.2;
+    sphere.material.opacity = 0.10 + ctx.hover*0.22;
+  }};
+};
+
+/* MULTI-AGENT — 7-node mesh with travelling message pulses */
+VIZ.agentgraph = function(accent){
+  const g = new THREE.Group();
+
+  // ---- CUSTOMIZE: AGENTS count + ring radius
+  const AGENTS = 7, RADIUS = 1.75;
+  const hubs = [];
+  const nodeGroup = new THREE.Group();
+  g.add(nodeGroup);
+
+  for (let i=0;i<AGENTS;i++){
+    const a = (i/AGENTS)*Math.PI*2;
+    const v = new THREE.Vector3(Math.cos(a)*RADIUS, Math.sin(a*2)*0.45, Math.sin(a)*RADIUS);
+    hubs.push(v);
+    const m = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.16, 1),
+      new THREE.MeshBasicMaterial({ color:accent, wireframe:true, transparent:true, opacity:0.85 })
+    );
+    m.position.copy(v);
+    nodeGroup.add(m);
+  }
+  // orchestrator at centre
+  const centre = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.32, 2),
+    new THREE.MeshBasicMaterial({ color:ACCENTS.copper, wireframe:true, transparent:true, opacity:0.9 })
+  );
+  g.add(centre);
+
+  // edges: every agent ↔ orchestrator, plus the ring
+  const edges = [];
+  hubs.forEach((v,i) => {
+    edges.push([new THREE.Vector3(0,0,0), v]);
+    edges.push([v, hubs[(i+1)%AGENTS]]);
+  });
+  const epos = new Float32Array(edges.length*6);
+  edges.forEach((e,i)=>{
+    epos[i*6]=e[0].x; epos[i*6+1]=e[0].y; epos[i*6+2]=e[0].z;
+    epos[i*6+3]=e[1].x; epos[i*6+4]=e[1].y; epos[i*6+5]=e[1].z;
+  });
+  const eGeo = new THREE.BufferGeometry();
+  eGeo.setAttribute('position', new THREE.BufferAttribute(epos,3));
+  g.add(new THREE.LineSegments(eGeo, new THREE.LineBasicMaterial({
+    color:accent, transparent:true, opacity:0.24, blending:THREE.AdditiveBlending
+  })));
+
+  // travelling message pulses along the edges
+  const PULSES = edges.length;
+  const pPos = new Float32Array(PULSES*3);
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
+  const pulses = new THREE.Points(pGeo, new THREE.PointsMaterial({
+    color:ACCENTS.brass, size:0.13, transparent:true, opacity:0.95,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  }));
+  g.add(pulses);
+  const offs = edges.map(() => Math.random());
+
+  return { group:g, update(t, dt, ctx){
+    g.rotation.y += dt*0.22 + ctx.dragX*0.002;
+    g.rotation.x = Math.sin(t*0.3)*0.2 + ctx.dragY*0.002;
+
+    centre.rotation.y += dt*0.9;
+    centre.rotation.x -= dt*0.5;
+    const beat = 1 + Math.sin(t*2.4)*0.08 + ctx.hover*0.25;
+    centre.scale.setScalar(beat);
+
+    nodeGroup.children.forEach((m,i) => {
+      m.rotation.y += dt*(0.5 + i*0.08);
+      m.scale.setScalar(1 + Math.sin(t*2 + i)*0.14 + ctx.hover*0.3);
+    });
+
+    // pulse speed rises with hover — "traffic under load"
+    const speed = 0.28 + ctx.hover*0.9 + ctx.progress*0.15;
+    for (let i=0;i<PULSES;i++){
+      offs[i] = (offs[i] + dt*speed) % 1;
+      const [a,b] = edges[i];
+      const k = offs[i];
+      pPos[i*3]   = a.x + (b.x-a.x)*k;
+      pPos[i*3+1] = a.y + (b.y-a.y)*k;
+      pPos[i*3+2] = a.z + (b.z-a.z)*k;
+    }
+    pGeo.attributes.position.needsUpdate = true;
+    pulses.material.size = 0.11 + ctx.hover*0.09;
+  }};
+};
+
+/* ---------- 2c. Mount every [data-viz] container ---------- */
+const stages = [];
+
+function mountStage(el){
+  const kind = el.dataset.viz;
+  const builder = VIZ[kind];
+  if (!builder) return;
+
+  const host = el.closest('[data-accent]');
+  const accentName = host ? host.dataset.accent : 'copper';
+  const accent = ACCENTS[accentName] || ACCENTS.copper;
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true, powerPreference:'high-performance' });
+  } catch(err){ return; }
+
+  // Cap at 1.5x: these panels are small, and 2x costs ~1.8x the pixels for
+  // no visible gain on soft additive geometry.
+  renderer.setPixelRatio(Math.min(DPR(), 1.5));
+  renderer.domElement.setAttribute('aria-hidden','true');
+  el.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
+  // Hero sits slightly further back so its ~2.6-unit particle shell clears the frame.
+  camera.position.set(0, 0, kind === 'hero' ? 7.2 : 6.8);
+
+  const viz = builder(accent);
+  scene.add(viz.group);
+
+  const stage = {
+    el, renderer, scene, camera, viz,
+    hover:0, hoverTarget:0, progress:0.5,
+    dragX:0, dragY:0, dragging:false, lastX:0, lastY:0,
+    visible:false, w:0, h:0
+  };
+
+  // hover interaction
+  el.addEventListener('pointerenter', () => { stage.hoverTarget = 1; });
+  el.addEventListener('pointerleave', () => { stage.hoverTarget = 0; stage.dragging = false; });
+
+  // drag-to-rotate
+  el.addEventListener('pointerdown', e => {
+    stage.dragging = true; stage.lastX = e.clientX; stage.lastY = e.clientY;
+    if (el.setPointerCapture) { try { el.setPointerCapture(e.pointerId); } catch(_){} }
+  });
+  el.addEventListener('pointerup',   () => { stage.dragging = false; });
+  el.addEventListener('pointermove', e => {
+    if (!stage.dragging) return;
+    stage.dragX += (e.clientX - stage.lastX);
+    stage.dragY += (e.clientY - stage.lastY);
+    stage.lastX = e.clientX; stage.lastY = e.clientY;
+  });
+
+  // only render while on screen
+  new IntersectionObserver(entries => {
+    entries.forEach(en => { stage.visible = en.isIntersecting; });
+  }, { rootMargin:'120px' }).observe(el);
+
+  resizeStage(stage);
+  stages.push(stage);
+}
+
+function resizeStage(s){
+  const r = s.el.getBoundingClientRect();
+  const w = Math.max(1, Math.round(r.width));
+  const h = Math.max(1, Math.round(r.height));
+  if (w === s.w && h === s.h) return;
+  s.w = w; s.h = h;
+  s.renderer.setSize(w, h, false);
+  s.camera.aspect = w / h;
+  s.camera.updateProjectionMatrix();
+}
+
+document.querySelectorAll('[data-viz]').forEach(mountStage);
+
+/* ---------- 2d. Single shared render loop ---------- */
+let last = performance.now();
+let running = true;
+let fpsAcc = 0, fpsFrames = 0;
+const fpsEl = document.getElementById('fps');
+
+/* Frame budget. Displays above 60Hz gain nothing visually here but cost
+   proportional CPU, so updates are capped. Devices that report few cores or
+   prefer reduced motion drop to 30fps. */
+const LOW_POWER = REDUCED || (navigator.hardwareConcurrency || 8) <= 4;
+const FRAME_MS = LOW_POWER ? 33.3 : 16.6;
+
+/* The background canvas is full-viewport, so unlike the project stages it has
+   no natural culling. Gate it on its own visibility. */
+let bgVisible = true;
+if ('IntersectionObserver' in window){
+  const bgEl = document.getElementById('bg-canvas');
+  if (bgEl) new IntersectionObserver(es => {
+    es.forEach(e => { bgVisible = e.isIntersecting; });
+  }, { rootMargin:'80px' }).observe(bgEl);
+}
+
+function tick(now){
+  if (running) requestAnimationFrame(tick);
+  const raw = now - last;
+  // throttle: skip the frame body until the budget has elapsed
+  if (raw < FRAME_MS){ return; }
+  const dt = Math.min(0.05, raw / 1000);
+  last = now;
+  const t = now / 1000;
+
+  // eased pointer
+  pointer.x += (pointer.tx - pointer.x) * 0.06;
+  pointer.y += (pointer.ty - pointer.y) * 0.06;
+
+  // ---- background field
+  if (bgRenderer && bgNeurons && bgVisible){
+    const N = bgNeurons;
+
+    /* --- organic → digital transition, driven by scroll ---------------------
+       Held fully organic through the hero, fully digital by ~78% down the page,
+       eased so the rectification never snaps.                               */
+    const raw = Math.max(0, Math.min(1, (scrollRatio - 0.06) / 0.72));
+    const target = raw*raw*(3 - 2*raw);              // smoothstep
+    N.morph += (target - N.morph) * 0.06;            // extra damping
+    const morph = N.morph;
+
+    /* --- 1. somas drift organically, then settle onto the digital lattice --- */
+    for (let i=0;i<N.NEURONS;i++){
+      const s = N.somaSeed[i], i3 = i*3;
+      // organic position gets a slow biological sway that dies out as it digitises
+      const sway = (1 - morph);
+      const ox = N.somaOrg[i3]   + Math.sin(t*0.17*s.sp + s.ph)*2.6*sway;
+      const oy = N.somaOrg[i3+1] + Math.cos(t*0.15*s.sp + s.ph*1.7)*2.6*sway;
+      const oz = N.somaOrg[i3+2] + Math.sin(t*0.12*s.sp + s.ph*0.6)*1.8*sway;
+      N.somaPos[i3]   = ox + (N.somaDig[i3]   - ox) * morph;
+      N.somaPos[i3+1] = oy + (N.somaDig[i3+1] - oy) * morph;
+      N.somaPos[i3+2] = oz + (N.somaDig[i3+2] - oz) * morph;
+    }
+    N.somaGeo.attributes.position.needsUpdate = true;
+    // cross-fade cell bodies -> digital nodes
+    N.somaMatOrg.opacity = 0.9 * (1 - morph);
+    N.somaMatDig.opacity = 0.95 * morph;
+    N.somaMatOrg.size = 3.4 - morph*0.8;
+    N.somaMatDig.size = 1.9 + morph*0.9;
+
+    /* --- 2. dendrites: rebuild the poly-lines each frame ------------------- */
+    const lp = N.linePos, lc = N.lineCol, SEG = N.SEG;
+    const cOrg = N.C_ORG, cDig = N.C_DIG;
+    const rr = cOrg.r + (cDig.r-cOrg.r)*morph,
+          gg = cOrg.g + (cDig.g-cOrg.g)*morph,
+          bb = cOrg.b + (cDig.b-cOrg.b)*morph;
+    let w = 0;
+    for (let c=0;c<N.conns.length;c++){
+      const cn = N.conns[c];
+      // synaptic activity makes a fibre brighten rhythmically
+      const act = 0.45 + 0.55*Math.abs(Math.sin(t*0.42 + cn.ph));
+      for (let s=0;s<SEG;s++){
+        const k0 = s/SEG, k1 = (s+1)/SEG;
+        N.connPoint(cn, k0, morph, N._v);
+        lp[w]=N._v.x; lp[w+1]=N._v.y; lp[w+2]=N._v.z;
+        // taper: dendrites are brightest near the soma, fading toward the tip
+        const f0 = (1 - Math.abs(k0-0.5)*1.1) * act;
+        lc[w]=rr*f0; lc[w+1]=gg*f0; lc[w+2]=bb*f0;
+        w+=3;
+        N.connPoint(cn, k1, morph, N._v);
+        lp[w]=N._v.x; lp[w+1]=N._v.y; lp[w+2]=N._v.z;
+        const f1 = (1 - Math.abs(k1-0.5)*1.1) * act;
+        lc[w]=rr*f1; lc[w+1]=gg*f1; lc[w+2]=bb*f1;
+        w+=3;
+      }
+    }
+    N.lineGeo.attributes.position.needsUpdate = true;
+    N.lineGeo.attributes.color.needsUpdate = true;
+    // digital traces read as fine etched circuitry, so they sit back a little
+    bgLines.material.opacity = 0.36 - morph*0.12;
+
+    /* --- 3. action potentials travelling the fibres ------------------------ */
+    const pp = N.pulsePos;
+    for (let i=0;i<N.pulseState.length;i++){
+      const ps = N.pulseState[i];
+      ps.t += dt * ps.sp * (1 + morph*0.55);   // signals speed up once digital
+      if (ps.t > 1){ ps.t = 0; ps.c = Math.floor(Math.random()*N.conns.length); }
+      if (!N.conns.length) break;
+      N.connPoint(N.conns[ps.c], ps.t, morph, N._v);
+      pp[i*3]=N._v.x; pp[i*3+1]=N._v.y; pp[i*3+2]=N._v.z;
+    }
+    N.pulseGeo.attributes.position.needsUpdate = true;
+    // warm amber spark when biological, pale data-white when digital
+    N.pulseMat.color.setRGB(1, 0.945 - morph*0.06, 0.84 + morph*0.16);
+    N.pulseMat.size = 2.5 - morph*0.7;
+
+    /* --- 4. synaptic boutons pulsing along the dendrites ------------------- */
+    const sp2 = N.synPos;
+    for (let i=0;i<N.synK.length;i++){
+      const sk = N.synK[i];
+      N.connPoint(N.conns[sk.c], sk.k, morph, N._v);
+      sp2[i*3]=N._v.x; sp2[i*3+1]=N._v.y; sp2[i*3+2]=N._v.z;
+    }
+    N.synGeo.attributes.position.needsUpdate = true;
+    N.synMat.size = (1.15 + Math.sin(t*0.95)*0.16) * (1 - morph*0.45);
+    N.synMat.opacity = 0.75 * (1 - morph*0.55);
+
+    /* --- 5. camera: the "zooming in" push, preserved --------------------- */
+    bgPoints.rotation.y = t * 0.007 + pointer.x * 0.1 + scrollRatio * 0.32;
+    bgPoints.rotation.x = pointer.y * 0.06 + scrollRatio * 0.14;
+    bgLines.rotation.copy(bgPoints.rotation);
+    N.synapses.rotation.copy(bgPoints.rotation);
+    N.pulses.rotation.copy(bgPoints.rotation);
+    bgCamera.position.z = 46 - scrollRatio * 20;
+    bgCamera.position.x = pointer.x * 3.2;
+    bgCamera.position.y = -pointer.y * 2.2;
+    bgCamera.lookAt(0,0,0);
+    bgRenderer.render(bgScene, bgCamera);
+  }
+
+  // ---- per-project stages
+  const vh = window.innerHeight;
+  for (const s of stages){
+    if (!s.visible) continue;
+    resizeStage(s);
+
+    // scroll progress of this element through the viewport: 0 entering → 1 leaving
+    const r = s.el.getBoundingClientRect();
+    s.progress = Math.max(0, Math.min(1, 1 - (r.top + r.height/2) / vh));
+
+    s.hover += (s.hoverTarget - s.hover) * 0.09;
+
+    // gentle parallax from the global cursor
+    s.camera.position.x = pointer.x * 0.7;
+    s.camera.position.y = -pointer.y * 0.5;
+    s.camera.lookAt(0,0,0);
+
+    s.viz.update(t, dt, {
+      progress: s.progress,
+      hover: s.hover,
+      pointer,
+      dragX: s.dragX,
+      dragY: s.dragY
+    });
+    s.renderer.render(s.scene, s.camera);
+  }
+
+  // fps readout in the footer
+  fpsAcc += dt; fpsFrames++;
+  if (fpsAcc >= 1){
+    if (fpsEl) fpsEl.textContent = Math.round(fpsFrames / fpsAcc) + ' fps';
+    fpsAcc = 0; fpsFrames = 0;
+  }
+
+}
+requestAnimationFrame(tick);
+
+/* ---------- 2e. Resize ---------- */
+let rt;
+window.addEventListener('resize', () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => {
+    if (bgRenderer){
+      bgRenderer.setPixelRatio(Math.min(DPR(), 1.5));
+      bgRenderer.setSize(window.innerWidth, window.innerHeight, false);
+      bgCamera.aspect = window.innerWidth / window.innerHeight;
+      bgCamera.updateProjectionMatrix();
+    }
+    stages.forEach(s => { s.w = 0; resizeStage(s); });
+  }, 140);
+});
+
+// pause the loop cost when the tab is hidden
+/* Hard-stop the loop when the tab is hidden. Browsers throttle rAF in
+   background tabs but still run it; halting outright drops idle CPU to zero. */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){
+    running = false;
+  } else if (!running){
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(tick);
+  }
+});
+
+})();
+</script>
+</body>
+</html>
